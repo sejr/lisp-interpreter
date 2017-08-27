@@ -6,15 +6,16 @@
 CXX = g++
 CXXFLAGS = -Wall
 COMPILE = $(CXX) $(CXXFLAGS) 
-SOURCEDIR = src/
-BUILDDIR = build/
-
-# Name of the executable; should match the contents of Runfile
+SRC = src/
+BIN = bin/
+BUILD = build/
 EXE = interpreter
 
-all:
-	mkdir $(BUILDDIR)
-	$(COMPILE) $(SOURCEDIR)main.cc -o $(BUILDDIR)$(EXE)
+all: interpreter
+
+interpreter:
+	mkdir $(BUILD)
+	$(COMPILE) $(SRC)main.cc -o $(BUILD)$(EXE)
 
 clean:
 	rm -rf build
