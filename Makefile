@@ -11,11 +11,20 @@ BIN = bin/
 BUILD = build/
 EXE = interpreter
 
+TESTINPUT = examples/ex1.lisp
+TESTOUTPUT = examples/ex1.result.lisp
+
 all: interpreter
 
 interpreter:
 	mkdir $(BUILD)
 	$(COMPILE) $(SRC)main.cc -o $(BUILD)$(EXE)
+
+test: interpreter
+	./$(BUILD)$(EXE) < $(TESTINPUT) > $(TESTOUTPUT)
+
+bat: clean test
+	cat $(TESTOUTPUT)
 
 clean:
 	rm -rf build

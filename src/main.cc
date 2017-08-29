@@ -1,5 +1,6 @@
-#include <iostream>
+#include <vector>
 #include <fstream>
+#include <iostream>
 #include "LexicalAnalyzer.h"
 
 /*
@@ -15,33 +16,35 @@ int main(int argc, char *argv[]) {
 }
 */
 
-void readData(std::istream& in)
-{
-    std::cout << in.rdbuf();
+std::vector<char> readFileToBuffer(std::istream& inputFile) {
+    std::vector<char> buffer;
+    char c = inputFile.get();
+    while (inputFile.good()) {
+        buffer.push_back(c);
+        c = inputFile.get();
+    }
+
+    return buffer;
 }
 
-int main(int argc, char** argv)
-{
-   if ( argc > 1 )
-   {
-      // The input file has been passed in the command line.
-      // Read the data from it.
-      std::ifstream ifile(argv[1]);
-      if ( ifile )
-      {
-         readData(ifile);
-      }
-      else
-      {
-         // Deal with error condition
-      }
-   }
-   else
-   {
-      // No input file has been passed in the command line.
-      // Read the data from stdin (std::cin).
-      readData(std::cin);
-   }
+int main(int argc, char** argv) {
+    std::vector<char> fileBuffer;
 
-   // Do the needful to process the data.
+    if ( argc > 1 ) {
+        std::ifstream inputFile(argv[1]);
+
+        if (inputFile) {
+            fileBuffer = readFileToBuffer(inputFile);
+        } else {
+            std::cout << "There was an issue opening the lisp file." << std::endl;
+            std::cout << "Please make sure the file name was typed correctly." << std::endl;
+        }
+    } else {
+        fileBuffer = readFileToBuffer(std::cin);
+    }
+
+    LexicalAnalyzer l;
+    l.parseFile(fileBuffer);
+
+    return 0;
 }
