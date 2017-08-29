@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     }
 
     LexicalAnalyzer l;
-    l.parseFile(fileBuffer);
+    std::vector<Token> tokens = l.parseFile(fileBuffer);
 
     return 0;
 }

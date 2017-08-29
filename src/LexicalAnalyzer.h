@@ -12,11 +12,10 @@ private:
     bool isWhitespace(char c);
     void printAtoms(std::vector<std::string>& atoms);
 public:
-    void parseFile(std::vector<char>& buffer);
-    Token getNextToken();
+    std::vector<Token> parseFile(std::vector<char>& buffer);
 };
 
-void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
+std::vector<Token> LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
     int position = 0;
 
     int openParenCount = 0;
@@ -25,6 +24,8 @@ void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
     std::vector<std::string> literalAtoms;
     std::vector<std::string> numericAtoms;
 
+    std::vector<Token> tokens;
+
     while (position < buffer.size()) {
         std::string temp; // for literal / numeric atoms
         char currentChar = buffer.at(position);
@@ -32,12 +33,15 @@ void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
         // Here we can fetch singleton tokens.
         switch (currentChar) {
             case '(':
+                tokens.push_back(Token('('));
                 openParenCount++;
                 break;
             case ')':
+                tokens.push_back(Token('('));
                 closeParenCount++;
                 break;
             default:
+                tokens.push_back(Token(currentChar));
                 break;
         }
 
@@ -59,6 +63,7 @@ void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
                 }
             }
 
+            tokens.push_back(Token(temp));
             literalAtoms.push_back(temp);
             temp.clear();
 
@@ -80,6 +85,9 @@ void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
                 }
             }
 
+            std::string::size_type sz;
+            int numeric = std::stoi (temp, &sz);
+            tokens.push_back(Token(numeric));
             numericAtoms.push_back(temp);
             temp.clear();
         }
@@ -101,11 +109,6 @@ void LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
     
     std::cout << "OPEN PARENTHESES: " << openParenCount << std::endl;
     std::cout << "CLOSING PARENTHESES: " << closeParenCount << std::endl;
-}
-
-Token LexicalAnalyzer::getNextToken() {
-    Token testToken = closingParenthesis;
-    return testToken;
 }
 
 void LexicalAnalyzer::printAtoms(std::vector<std::string>& atoms) {
