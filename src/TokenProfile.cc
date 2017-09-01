@@ -8,6 +8,7 @@ TokenProfile::TokenProfile() {
 TokenProfile::TokenProfile(std::vector<Token> tokens) {
     openParenCount = 0;
     closeParenCount = 0;
+    containsError = false;
     for (unsigned int i = 0; i < tokens.size(); i++) {
         Token t = tokens.at(i);
         orderedTokens.push_back(t);
@@ -20,6 +21,7 @@ TokenProfile::TokenProfile(std::vector<Token> tokens) {
         } else if (t.getTokenType() == TokenType::parenClose) {
             closeParenCount++;
         } else if (t.getTokenType() == TokenType::error) {
+            // std::cout << "Error on token: " << t.repr() << std::endl << std::endl;
             containsError = true;
         }
     }

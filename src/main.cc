@@ -46,6 +46,7 @@ int main(int argc, char** argv) {
         t.getTokenType() != eof &&
         t.getTokenType() != error
     ) {
+        // std::cout << t.repr() << std::endl;
         t = l.getNextToken(fileBuffer, position);
         if (t.getTokenType() != whitespace) {
             tokens.push_back(t);
