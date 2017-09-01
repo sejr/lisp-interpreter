@@ -37,6 +37,7 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "__locale": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "chrono": "cpp"
     }
 }

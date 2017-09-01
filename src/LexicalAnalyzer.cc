@@ -1,5 +1,10 @@
 #include "LexicalAnalyzer.h"
 
+// This is an essentially-deprecated API that generates a TokenProfile
+// directly from a buffer of characters, read in through cin or C++'s
+// file handling library. The method currently being used in the main
+// source file, with LexicalAnalyzer::getNextToken(), is the preffered
+// method for fetching tokens (and TokenProfiles) from an input file.
 TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
     unsigned int position = 0;
     TokenProfile profile;
@@ -8,14 +13,16 @@ TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
         std::string temp; // for literal / numeric atoms
         char currentChar = buffer.at(position);
 
-        // Check if we are starting a valid literal atom (begins with A-Z)
+        // First we want to see if the current character indicates
+        // the start of a new literal token.
         if (isAlpha(currentChar)) {
             temp.push_back(currentChar);
 
             position++;
             currentChar = buffer.at(position);
 
-            // Fetch the rest of the literal atom
+            // As long as we don't hit whitespace or other characters,
+            // just keep reading in.
             while (!isWhitespace(currentChar)) {
                 if (isAlpha(currentChar) || isNumeric(currentChar)) {
                     temp.push_back(currentChar);
@@ -30,6 +37,8 @@ TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
             profile.orderedTokens.push_back(Token(temp));
             temp.clear();
 
+        // Now we want to check of the current character could be the
+        // start of a numeric token.
         } else if (isNumeric(currentChar)) {
             temp.push_back(currentChar);
 
@@ -56,7 +65,8 @@ TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
             temp.clear();
         }
 
-        // Here we can fetch singleton tokens.
+        // Finally, we will catch singleton tokens and other
+        // possibilites.
         switch (currentChar) {
             case '(':
                 profile.orderedTokens.push_back(Token('('));
@@ -79,6 +89,8 @@ TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
     return profile;
 }
 
+// This is the preferred way of generating token vectors, which uses a tracked position
+// value to continue through a buffer, returning individual tokens one at a time.
 Token LexicalAnalyzer::getNextToken(std::vector<char> &buffer, unsigned int &position) {
     if (position < buffer.size()) {
         std::string temp; // for literal / numeric atoms
@@ -109,6 +121,7 @@ Token LexicalAnalyzer::getNextToken(std::vector<char> &buffer, unsigned int &pos
 
             return Token(temp);
 
+        // Check if we are starting a valid numeric atom (begins with 0-9)
         } else if (isNumeric(currentChar)) {
             bool err = false;
             temp.push_back(currentChar);
@@ -117,6 +130,10 @@ Token LexicalAnalyzer::getNextToken(std::vector<char> &buffer, unsigned int &pos
             currentChar = buffer.at(position);
 
             while (!isWhitespace(currentChar)) {
+                // Once we begin a numeric atom, we can't go back to alpha
+                // characters; thus, we are in an error state and need to
+                // abort. We still generate error tokens, however, to inform
+                // the user of which token caused the error.
                 if (isAlpha(currentChar)) {
                     err = true;
                     temp.push_back(currentChar);
@@ -155,10 +172,16 @@ Token LexicalAnalyzer::getNextToken(std::vector<char> &buffer, unsigned int &pos
         }
 
     } else {
+        // Forcing the EOF token to prevent an error;
+        // the LexicalAnalyzer should never reach this point.
         return Token("eof");
     }
+
+    exit(EXIT_FAILURE);
 }
 
+// Quick helper function to determine if a particular
+// character is a valid alpha character (A-Z).
 bool LexicalAnalyzer::isAlpha(char c) {
     bool lowerBound = (unsigned int) c >= 65; // A
     bool upperBound = (unsigned int) c <= 90; // Z
@@ -166,6 +189,8 @@ bool LexicalAnalyzer::isAlpha(char c) {
     return lowerBound && upperBound;
 }
 
+// Quick helper function to determine if a particular
+// character is a valid numeric character (0-9).
 bool LexicalAnalyzer::isNumeric(char c) {
     bool lowerBound = (unsigned int) c >= 48; // 0
     bool upperBound = (unsigned int) c <= 57; // 9
@@ -173,6 +198,8 @@ bool LexicalAnalyzer::isNumeric(char c) {
     return lowerBound && upperBound;
 }
 
+// Quick helper function to determine if a particular
+// character is whitespace.
 bool LexicalAnalyzer::isWhitespace(char c) {
     bool s = (unsigned int) c == 32; // space
     bool r = (unsigned int) c == 13; // return

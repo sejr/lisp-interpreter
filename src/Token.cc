@@ -1,5 +1,8 @@
 #include "Token.h"
 
+// This generates a token instance with an associated character,
+// which will be used primarily for opening and closing braces
+// of various kinds.
 Token::Token(char tokenChar) {
     m_char = tokenChar;
     switch (tokenChar) {
@@ -15,11 +18,16 @@ Token::Token(char tokenChar) {
     }
 }
 
+// This generates a token instance with an associated integer value,
+// which is used (obviously) for storing numerical information.
 Token::Token(int numericAtom) {
     m_numericAtom = numericAtom;
     m_type = atomNumeric;
 }
 
+// This generates a token instance with an associated integer value.
+// We also incorporate meta tokens through this interface, including
+// those for error, EOF, and whitespace.
 Token::Token(std::string literalAtom) {
     m_literalAtom = literalAtom;
     if (literalAtom == "err") {
@@ -33,6 +41,9 @@ Token::Token(std::string literalAtom) {
     }
 }
 
+// This generates a token instance that is in an error state. We do
+// this so we can store the token literal that caused the error; this
+// allows us to tell the user which token caused the problem.
 Token::Token(std::string atom, bool is_error) {
     if (is_error) {
         m_type = error;
@@ -46,10 +57,13 @@ Token::Token(std::string atom, bool is_error) {
     }
 }
 
+// Returns the enum value corresponding to the token type.
 TokenType Token::getTokenType() {
     return m_type;
 }
 
+// Returns a print-friendly representation of the token, mainly used for
+// debugging at this point in time. Inspired by Python's __repr__() method.
 std::string Token::repr() {
     std::string s;
     if (m_type == TokenType::atomLiteral) {

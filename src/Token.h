@@ -3,6 +3,9 @@
 
 #include <string>
 
+// The TokenType is a short-hand way to uniquely identify
+// different types of tokens. This list will likely be
+// extended in the future.
 typedef enum {
     atomLiteral,
     atomNumeric,
@@ -13,6 +16,10 @@ typedef enum {
     eof
 } TokenType;
 
+// The token is an object which provides information about
+// a single piece of code in our lisp interpreter. Tokens are
+// generated through the LexicalAnalyzer, then parsed using
+// the parsing module that hasn't been built yet.
 class Token {
 public:
     Token(char tokenChar);

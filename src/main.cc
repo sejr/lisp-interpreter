@@ -6,6 +6,8 @@
 #include "TokenProfile.h"
 #include "Token.h"
 
+// Helper function that just takes the input file and returns a vector
+// of characters. This makes the LexicalAnalyzer's job a lot easier.
 std::vector<char> readFileToBuffer(std::istream& inputFile) {
     std::vector<char> buffer;
     char c = inputFile.get();
@@ -18,7 +20,7 @@ std::vector<char> readFileToBuffer(std::istream& inputFile) {
 }
 
 int main(int argc, char** argv) {
-    std::vector<char> fileBuffer;
+    std::vector<char> fileBuffer; // For storing the file contents.
 
     if ( argc > 1 ) {
         std::ifstream inputFile(argv[1]);
@@ -34,8 +36,6 @@ int main(int argc, char** argv) {
     }
 
     LexicalAnalyzer l;
-    // TokenProfile profile = l.tokenize(fileBuffer);
-    // profile.displayTokenInfo();
 
     unsigned int position = 0;
     std::vector<Token> tokens;
