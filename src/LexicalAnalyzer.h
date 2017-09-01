@@ -16,7 +16,7 @@ public:
 };
 
 TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
-    int position = 0;
+    unsigned int position = 0;
     TokenProfile profile;
 
     while (position < buffer.size()) {
@@ -94,7 +94,7 @@ TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
 }
 
 void LexicalAnalyzer::printAtoms(std::vector<std::string>& atoms) {
-    for (int i = 0; i < atoms.size() - 1; i++) {
+    for (unsigned int i = 0; i < atoms.size() - 1; i++) {
         std::cout << atoms.at(i) << ", ";
     }
     std::cout << atoms.at(atoms.size() - 1) << std::endl;
