@@ -6,25 +6,30 @@
 CXX = g++
 CXXFLAGS = -Wall -std=c++0x
 COMPILE = $(CXX) $(CXXFLAGS) 
-SRC = src/
-BIN = bin/
-BUILD = build/
+
+SRC = src
+BIN = bin
+BUILD = build
 EXE = interpreter
+OBJS = Token.o TokenProfile.o LexicalAnalyzer.o
 
 TESTINPUT = examples/ex1.lisp
 TESTOUTPUT = examples/ex1.result.lisp
 
-all: interpreter
+all: $(OBJS)
+	mkdir bin
+	$(CXX) $(SRC)/main.cc $(BUILD)/Token.o $(BUILD)/TokenProfile.o $(BUILD)/LexicalAnalyzer.o -o $(BIN)/$(EXE)
 
-interpreter:
+Token.o: $(SRC)/Token.cc
 	mkdir $(BUILD)
-	$(COMPILE) $(SRC)main.cc -o $(BUILD)$(EXE)
+	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-test: interpreter
-	./$(BUILD)$(EXE) < $(TESTINPUT) > $(TESTOUTPUT)
+TokenProfile.o: $(SRC)/TokenProfile.cc
+	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-bat: clean test
-	cat $(TESTOUTPUT)
+LexicalAnalyzer.o: $(SRC)/LexicalAnalyzer.cc
+	$(COMPILE) -c -o $(BUILD)/$@ $<
 
 clean:
 	rm -rf build
+	rm -rf bin

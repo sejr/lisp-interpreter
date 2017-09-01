@@ -1,7 +1,10 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+
 #include "LexicalAnalyzer.h"
+#include "TokenProfile.h"
+#include "Token.h"
 
 std::vector<char> readFileToBuffer(std::istream& inputFile) {
     std::vector<char> buffer;
@@ -31,8 +34,26 @@ int main(int argc, char** argv) {
     }
 
     LexicalAnalyzer l;
-    TokenProfile profile = l.tokenize(fileBuffer);
-    profile.displayTokenInfo();
+    // TokenProfile profile = l.tokenize(fileBuffer);
+    // profile.displayTokenInfo();
+
+    unsigned int position = 0;
+    std::vector<Token> tokens;
+    Token t = l.getNextToken(fileBuffer, position);
+    tokens.push_back(t);
+
+    while (
+        t.getTokenType() != TokenType::eof &&
+        t.getTokenType() != TokenType::error
+    ) {
+        t = l.getNextToken(fileBuffer, position);
+        if (t.getTokenType() != TokenType::whitespace) {
+            tokens.push_back(t);
+        }
+    }
+
+    TokenProfile tp = TokenProfile(tokens);
+    tp.displayTokenInfo();
 
     return 0;
 }
