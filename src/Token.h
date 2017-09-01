@@ -80,7 +80,7 @@ public:
 
 void TokenProfile::displayTokenInfo() {
     std::cout << "LITERAL ATOMS: " << literalAtoms.size() << ", ";
-    for (int i = 0; i < literalAtoms.size() - 1; i++) {
+    for (unsigned int i = 0; i < literalAtoms.size() - 1; i++) {
         std::cout << literalAtoms.at(i).getLiteralAtom() << ", ";
     }
     std::cout << literalAtoms.at(literalAtoms.size() - 1).getLiteralAtom();
@@ -88,10 +88,10 @@ void TokenProfile::displayTokenInfo() {
 
     int sum = 0;
     std::cout << "NUMERIC ATOMS: " << numericAtoms.size() << ", ";
-    for (int i = 0; i < numericAtoms.size(); i++) {
+    for (unsigned int i = 0; i < numericAtoms.size(); i++) {
         sum += numericAtoms.at(i).getNumericAtom();
     }
-    std::cout << std::to_string(sum) << std::endl;
+    std::cout << std::to_string((long long int) /* for stdlinux compatibility? */ sum) << std::endl;
     
     std::cout << "OPEN PARENTHESES: " << openParenCount << std::endl;
     std::cout << "CLOSING PARENTHESES: " << closeParenCount << std::endl;

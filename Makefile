@@ -4,7 +4,7 @@
 # is a lot of info about "make" on the web.
 
 CXX = g++
-CXXFLAGS = -Wall
+CXXFLAGS = -Wall -std=c++0x
 COMPILE = $(CXX) $(CXXFLAGS) 
 SRC = src/
 BIN = bin/
