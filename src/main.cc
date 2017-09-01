@@ -43,11 +43,11 @@ int main(int argc, char** argv) {
     tokens.push_back(t);
 
     while (
-        t.getTokenType() != TokenType::eof &&
-        t.getTokenType() != TokenType::error
+        t.getTokenType() != eof &&
+        t.getTokenType() != error
     ) {
         t = l.getNextToken(fileBuffer, position);
-        if (t.getTokenType() != TokenType::whitespace) {
+        if (t.getTokenType() != whitespace) {
             tokens.push_back(t);
         }
     }

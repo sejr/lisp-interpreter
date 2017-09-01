@@ -8,7 +8,7 @@ TokenProfile::TokenProfile() {
 TokenProfile::TokenProfile(std::vector<Token> tokens) {
     openParenCount = 0;
     closeParenCount = 0;
-    for (int i = 0; i < tokens.size(); i++) {
+    for (unsigned int i = 0; i < tokens.size(); i++) {
         Token t = tokens.at(i);
         orderedTokens.push_back(t);
         if (t.getTokenType() == TokenType::atomLiteral) {
@@ -28,7 +28,7 @@ TokenProfile::TokenProfile(std::vector<Token> tokens) {
 void TokenProfile::displayTokenInfo() {
     if (containsError) {
         std::cout << "ERROR: Invalid token ";
-        for (int i = 0; i < orderedTokens.size(); i++) {
+        for (unsigned int i = 0; i < orderedTokens.size(); i++) {
             if (orderedTokens.at(i).getTokenType() == error) {
                 std::cout << orderedTokens.at(i).repr() << " ";
             }
