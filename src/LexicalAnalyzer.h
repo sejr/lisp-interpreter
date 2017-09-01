@@ -12,38 +12,16 @@ private:
     bool isWhitespace(char c);
     void printAtoms(std::vector<std::string>& atoms);
 public:
-    std::vector<Token> parseFile(std::vector<char>& buffer);
+    TokenProfile tokenize(std::vector<char>& buffer);
 };
 
-std::vector<Token> LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
+TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
     int position = 0;
-
-    int openParenCount = 0;
-    int closeParenCount = 0;
-
-    std::vector<std::string> literalAtoms;
-    std::vector<std::string> numericAtoms;
-
-    std::vector<Token> tokens;
+    TokenProfile profile;
 
     while (position < buffer.size()) {
         std::string temp; // for literal / numeric atoms
         char currentChar = buffer.at(position);
-
-        // Here we can fetch singleton tokens.
-        switch (currentChar) {
-            case '(':
-                tokens.push_back(Token('('));
-                openParenCount++;
-                break;
-            case ')':
-                tokens.push_back(Token('('));
-                closeParenCount++;
-                break;
-            default:
-                tokens.push_back(Token(currentChar));
-                break;
-        }
 
         // Check if we are starting a valid literal atom (begins with A-Z)
         if (isAlpha(currentChar)) {
@@ -63,8 +41,8 @@ std::vector<Token> LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
                 }
             }
 
-            tokens.push_back(Token(temp));
-            literalAtoms.push_back(temp);
+            profile.literalAtoms.push_back(Token(temp));
+            profile.orderedTokens.push_back(Token(temp));
             temp.clear();
 
         } else if (isNumeric(currentChar)) {
@@ -87,28 +65,32 @@ std::vector<Token> LexicalAnalyzer::parseFile(std::vector<char>& buffer) {
 
             std::string::size_type sz;
             int numeric = std::stoi (temp, &sz);
-            tokens.push_back(Token(numeric));
-            numericAtoms.push_back(temp);
+            profile.numericAtoms.push_back(Token(numeric));
+            profile.orderedTokens.push_back(Token(numeric));
             temp.clear();
+        }
+
+        // Here we can fetch singleton tokens.
+        switch (currentChar) {
+            case '(':
+                profile.orderedTokens.push_back(Token('('));
+                profile.openParenCount++;
+                break;
+            case ')':
+                profile.orderedTokens.push_back(Token('('));
+                profile.closeParenCount++;
+                break;
+            default:
+                if (!isWhitespace(currentChar)) {
+                    profile.orderedTokens.push_back(Token(currentChar));
+                }
+                break;
         }
 
         position++;
     }
 
-    std::cout << "LITERAL ATOMS: " << literalAtoms.size() << ", ";
-    printAtoms(literalAtoms);
-
-    int sum = 0;
-    std::cout << "NUMERIC ATOMS: " << numericAtoms.size() << ", ";
-    for (int i = 0; i < numericAtoms.size(); i++) {
-        std::string::size_type sz;
-        int numeric = std::stoi (numericAtoms.at(i), &sz);
-        sum += numeric;
-    }
-    std::cout << std::to_string(sum) << std::endl;
-    
-    std::cout << "OPEN PARENTHESES: " << openParenCount << std::endl;
-    std::cout << "CLOSING PARENTHESES: " << closeParenCount << std::endl;
+    return profile;
 }
 
 void LexicalAnalyzer::printAtoms(std::vector<std::string>& atoms) {

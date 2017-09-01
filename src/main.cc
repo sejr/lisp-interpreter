@@ -3,19 +3,6 @@
 #include <iostream>
 #include "LexicalAnalyzer.h"
 
-/*
-int main(int argc, char *argv[]) {
-
-    for (int i = 0; i < argc; i++) {
-        cout << argv[i] << endl;
-    }
-
-    LexicalAnalyzer l;
-    Token next = l.getNextToken();
-    cout << next.getValue() << endl;
-}
-*/
-
 std::vector<char> readFileToBuffer(std::istream& inputFile) {
     std::vector<char> buffer;
     char c = inputFile.get();
@@ -44,7 +31,8 @@ int main(int argc, char** argv) {
     }
 
     LexicalAnalyzer l;
-    std::vector<Token> tokens = l.parseFile(fileBuffer);
+    TokenProfile profile = l.tokenize(fileBuffer);
+    profile.displayTokenInfo();
 
     return 0;
 }
