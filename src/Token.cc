@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Token.h"
 
 // This generates a token instance with an associated character,
@@ -54,6 +55,12 @@ Token::Token(std::string atom, bool is_error) {
         std::string::size_type sz;
         int numeric = std::stoi (atom, &sz);
         m_numericAtom = numeric;
+    }
+}
+
+void Token::iterateAttributes() {
+    for (auto& kv : attributes) {
+        std::cout << kv.first << ": " << kv.second << std::endl;
     }
 }
 

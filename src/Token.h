@@ -2,6 +2,7 @@
 #define TOKEN_H
 
 #include <string>
+#include <map>
 
 // The TokenType is a short-hand way to uniquely identify
 // different types of tokens. This list will likely be
@@ -28,6 +29,7 @@ public:
     Token(std::string atom, bool is_error);
 
     TokenType getTokenType();
+    void iterateAttributes();
     std::string repr();
     
 private:
@@ -35,6 +37,7 @@ private:
     int m_numericAtom;
     std::string m_literalAtom;
     TokenType m_type;
+    std::map<std::string, std::string> attributes;
 };
 
 #endif
