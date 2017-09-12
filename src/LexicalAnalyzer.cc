@@ -1,97 +1,38 @@
 #include "LexicalAnalyzer.h"
 
-// This is an essentially-deprecated API that generates a TokenProfile
-// directly from a buffer of characters, read in through cin or C++'s
-// file handling library. The method currently being used in the main
-// source file, with LexicalAnalyzer::getNextToken(), is the preffered
-// method for fetching tokens (and TokenProfiles) from an input file.
-TokenProfile LexicalAnalyzer::tokenize(std::vector<char>& buffer) {
-    unsigned int position = 0;
-    TokenProfile profile;
+LexicalAnalyzer::LexicalAnalyzer(
+    std::vector<char> &buffer,
+    unsigned int origin
+) : position(origin), currentToken(getTokenAtPosition(buffer, origin)) {
 
-    while (position < buffer.size()) {
-        std::string temp; // for literal / numeric atoms
-        char currentChar = buffer.at(position);
+    unsigned int p = 0;
+    Token t = getTokenAtPosition(buffer, p);
+    tokens.push_back(t);
 
-        // First we want to see if the current character indicates
-        // the start of a new literal token.
-        if (isAlpha(currentChar)) {
-            temp.push_back(currentChar);
+    currentToken = getCurrentToken();
 
-            position++;
-            currentChar = buffer.at(position);
-
-            // As long as we don't hit whitespace or other characters,
-            // just keep reading in.
-            while (!isWhitespace(currentChar)) {
-                if (isAlpha(currentChar) || isNumeric(currentChar)) {
-                    temp.push_back(currentChar);
-                    position++;
-                    currentChar = buffer.at(position);
-                } else {
-                    break;
-                }
-            }
-
-            profile.literalAtoms.push_back(Token(temp));
-            profile.orderedTokens.push_back(Token(temp));
-            temp.clear();
-
-        // Now we want to check of the current character could be the
-        // start of a numeric token.
-        } else if (isNumeric(currentChar)) {
-            temp.push_back(currentChar);
-
-            position++;
-            currentChar = buffer.at(position);
-
-            while (!isWhitespace(currentChar)) {
-                if (isAlpha(currentChar)) {
-                    std::string err = "ERR";
-                    profile.orderedTokens.push_back(Token(err));
-                } else if (isNumeric(currentChar)) {
-                    temp.push_back(currentChar);
-                    position++;
-                    currentChar = buffer.at(position);
-                } else {
-                    break;
-                }
-            }
-
-            std::string::size_type sz;
-            int numeric = std::stoi (temp, &sz);
-            profile.numericAtoms.push_back(Token(numeric));
-            profile.orderedTokens.push_back(Token(numeric));
-            temp.clear();
+    while (
+        t.getTokenType() != eof &&
+        t.getTokenType() != error
+    ) {
+        t = getTokenAtPosition(buffer, p);
+        if (t.getTokenType() != whitespace) {
+            tokens.push_back(t);
         }
-
-        // Finally, we will catch singleton tokens and other
-        // possibilites.
-        switch (currentChar) {
-            case '(':
-                profile.orderedTokens.push_back(Token('('));
-                profile.openParenCount++;
-                break;
-            case ')':
-                profile.orderedTokens.push_back(Token('('));
-                profile.closeParenCount++;
-                break;
-            default:
-                if (!isWhitespace(currentChar)) {
-                    profile.orderedTokens.push_back(Token(currentChar));
-                }
-                break;
-        }
-
-        position++;
     }
+}
 
-    return profile;
+void LexicalAnalyzer::moveToNextToken() {
+  position += 1;
+}
+
+Token LexicalAnalyzer::getCurrentToken() {
+  return tokens.at(position);
 }
 
 // This is the preferred way of generating token vectors, which uses a tracked position
 // value to continue through a buffer, returning individual tokens one at a time.
-Token LexicalAnalyzer::getNextToken(std::vector<char> &buffer, unsigned int &position) {
+Token LexicalAnalyzer::getTokenAtPosition(std::vector<char> &buffer, unsigned int &position) {
     if (position < buffer.size()) {
         std::string temp; // for literal / numeric atoms
         char currentChar = buffer.at(position);

@@ -11,12 +11,18 @@
 // has a way to generate a TokenProfile from a single pass through said input.
 class LexicalAnalyzer {
 private:
-    bool isAlpha(char c);
-    bool isNumeric(char c);
-    bool isWhitespace(char c);
+    int position;
+    Token currentToken;
+
+    static bool isAlpha(char c);
+    static bool isNumeric(char c);
+    static bool isWhitespace(char c);
 public:
-    TokenProfile tokenize(std::vector<char>& buffer);
-    Token getNextToken(std::vector<char> &buffer, unsigned int &position);
+    std::vector<Token> tokens;
+    LexicalAnalyzer(std::vector<char> &buffer, unsigned int position);
+    Token getTokenAtPosition(std::vector<char> &buffer, unsigned int &position);
+    Token getCurrentToken();
+    void moveToNextToken();
 };
 
 #endif

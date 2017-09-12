@@ -13,7 +13,8 @@ typedef enum {
     parenClose,
     whitespace,
     error,
-    eof
+    eof,
+    nil
 } TokenType;
 
 // The token is an object which provides information about
@@ -22,6 +23,7 @@ typedef enum {
 // the parsing module that hasn't been built yet.
 class Token {
 public:
+    Token();
     Token(char tokenChar);
     Token(int numericAtom);
     Token(std::string literalAtom);
@@ -29,7 +31,7 @@ public:
 
     TokenType getTokenType();
     std::string repr();
-    
+
 private:
     char m_char;
     int m_numericAtom;

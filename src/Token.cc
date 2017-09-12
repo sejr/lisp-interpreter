@@ -1,5 +1,9 @@
 #include "Token.h"
 
+Token::Token() {
+    m_type = nil;
+}
+
 // This generates a token instance with an associated character,
 // which will be used primarily for opening and closing braces
 // of various kinds.
@@ -36,6 +40,8 @@ Token::Token(std::string literalAtom) {
         m_type = eof;
     } else if (literalAtom == "whitespace") {
         m_type = whitespace;
+    } else if (literalAtom == "nil"){
+        m_type = nil;
     } else {
         m_type = atomLiteral;
     }
@@ -83,6 +89,8 @@ std::string Token::repr() {
         s = m_literalAtom;
     } else if (m_type == eof) {
         s = "eof";
+    } else if (m_type == nil) {
+        s = "NIL";
     } else {
         s = "???";
     }

@@ -1,3 +1,7 @@
+# Personal
+.vscode/
+cmake-build-debug/
+
 # Prerequisites
 *.d
 

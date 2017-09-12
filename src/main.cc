@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "Parser.h"
 #include "LexicalAnalyzer.h"
 #include "TokenProfile.h"
 #include "Token.h"
@@ -35,26 +36,10 @@ int main(int argc, char** argv) {
         fileBuffer = readFileToBuffer(std::cin);
     }
 
-    LexicalAnalyzer l;
-
-    unsigned int position = 0;
-    std::vector<Token> tokens;
-    Token t = l.getNextToken(fileBuffer, position);
-    tokens.push_back(t);
-
-    while (
-        t.getTokenType() != eof &&
-        t.getTokenType() != error
-    ) {
-        // std::cout << t.repr() << std::endl;
-        t = l.getNextToken(fileBuffer, position);
-        if (t.getTokenType() != whitespace) {
-            tokens.push_back(t);
-        }
-    }
-
-    TokenProfile tp = TokenProfile(tokens);
-    tp.displayTokenInfo();
+    unsigned int scannerOrigin = 0;
+    LexicalAnalyzer l = LexicalAnalyzer(fileBuffer, scannerOrigin);
+    Parser p = Parser(l);
+    p.start();
 
     return 0;
 }
