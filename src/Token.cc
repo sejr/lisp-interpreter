@@ -2,6 +2,7 @@
 
 Token::Token() {
     m_type = nil;
+    m_isNil = true;
 }
 
 // This generates a token instance with an associated character,
@@ -9,6 +10,7 @@ Token::Token() {
 // of various kinds.
 Token::Token(char tokenChar) {
     m_char = tokenChar;
+    m_isNil = false;
     switch (tokenChar) {
         case '(':
             m_type = parenOpen;
@@ -27,6 +29,7 @@ Token::Token(char tokenChar) {
 Token::Token(int numericAtom) {
     m_numericAtom = numericAtom;
     m_type = atomNumeric;
+    m_isNil = false;
 }
 
 // This generates a token instance with an associated integer value.
@@ -36,12 +39,16 @@ Token::Token(std::string literalAtom) {
     m_literalAtom = literalAtom;
     if (literalAtom == "err") {
         m_type = error;
+        m_isNil = false;
     } else if (literalAtom == "eof") {
         m_type = eof;
+        m_isNil = false;
     } else if (literalAtom == "whitespace") {
         m_type = whitespace;
+        m_isNil = false;
     } else if (literalAtom == "nil"){
         m_type = nil;
+        m_isNil = true;
     } else {
         m_type = atomLiteral;
     }
@@ -66,6 +73,10 @@ Token::Token(std::string atom, bool is_error) {
 // Returns the enum value corresponding to the token type.
 TokenType Token::getTokenType() {
     return m_type;
+}
+
+bool Token::isNil() {
+    return m_isNil;
 }
 
 // Returns a print-friendly representation of the token, mainly used for

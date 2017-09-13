@@ -39,7 +39,8 @@ int main(int argc, char** argv) {
     unsigned int scannerOrigin = 0;
     LexicalAnalyzer l = LexicalAnalyzer(fileBuffer, scannerOrigin);
     Parser p = Parser(l);
-    p.start();
+    p.runTests();
+    // p.start();
 
     return 0;
 }

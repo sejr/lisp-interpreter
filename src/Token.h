@@ -31,12 +31,14 @@ public:
 
     TokenType getTokenType();
     std::string repr();
+    bool isNil();
 
 private:
     char m_char;
     int m_numericAtom;
     std::string m_literalAtom;
     TokenType m_type;
+    bool m_isNil;
 };
 
 #endif
