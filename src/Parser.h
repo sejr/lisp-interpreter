@@ -17,11 +17,11 @@
 #define IS_ATOM true
 #define IS_NOT_ATOM false
 
-struct ExpressionTreeNode {
+typedef struct ExpressionTreeNode {
     Token atom;
     ExpressionTreeNode *leftChild;
     ExpressionTreeNode *rightChild;
-};
+} ExpressionTreeNode;
 
 class Parser {
 private:
