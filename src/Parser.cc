@@ -51,7 +51,7 @@ void Parser::start() {
  */
 void Parser::parseExpression(ExpressionTreeNode *root) {
     // std::cout << scanner.getCurrentToken().repr() << std::endl;
-    ExpressionTreeNode *nodeNIL = new ExpressionTreeNode;
+    ExpressionTreeNode *nodeNIL = new ExpressionTreeNode();
 
     // Scaffold out an empty node.
     ExpressionTreeNode *current = root;
