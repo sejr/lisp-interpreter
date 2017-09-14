@@ -1,0 +1,4 @@
+123
+(3 . (5 . ((XYZ . NIL) . (7 . NIL))))
+(DEFUN . (F23 . ((X . NIL) . ((PLUS . (X . (12 . (55 . NIL)))) . NIL))))
+(NIL . (5 . (NIL . ((NIL . NIL) . (7 . ((NIL . (9 . (NIL . NIL))) . NIL))))))
