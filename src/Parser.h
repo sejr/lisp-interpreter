@@ -19,14 +19,15 @@
 
 struct ExpressionTreeNode {
     Token atom;
-    bool isList;
     ExpressionTreeNode *leftChild;
     ExpressionTreeNode *rightChild;
 };
 
 class Parser {
 private:
+    bool isList;
     LexicalAnalyzer scanner;
+    bool isAtom(Token t);
     void printExpression_test1();
     void printExpression_test2();
     void printExpression_test3();
@@ -40,7 +41,7 @@ public:
     void runTests();
     void printTokens();
     void parseExpression(ExpressionTreeNode *root);
-    std::string printExpression(ExpressionTreeNode *root, bool isAtom);
+    std::string printExpression(ExpressionTreeNode *root, bool isList);
 };
 
 #endif

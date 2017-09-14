@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
     unsigned int scannerOrigin = 0;
     LexicalAnalyzer l = LexicalAnalyzer(fileBuffer, scannerOrigin);
     Parser p = Parser(l);
-    p.runTests();
-    // p.start();
+    // p.runTests();
+    // std::cout << "\n\n";
+    p.start();
 
     return 0;
 }

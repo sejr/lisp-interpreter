@@ -29,6 +29,10 @@ public:
     Token(std::string literalAtom);
     Token(std::string atom, bool is_error);
 
+    operator bool() const {
+        return m_isNil;
+    }
+
     TokenType getTokenType();
     std::string repr();
     bool isNil();

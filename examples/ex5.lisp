@@ -1,7 +1,4 @@
 123
-TESTING123
-IWISHTHISWOULDWORK
-(PLEASE (BE (LENIENT (ON (GRADING (THX))))))
-(3 5 (XYZ) 7)
-(NIL 5 () (()) 7 (() 9 ()) )
+(ROOT TEST1 TEST2 TEST3)
 (DEFUN F23 (X) (PLUS X 12 55))
+(NIL 5 ( ) (( )) 7 (( ) 9 ( )) )

@@ -94,10 +94,21 @@ Token LexicalAnalyzer::getTokenAtPosition(std::vector<char> &buffer, unsigned in
 
         // Here we can fetch singleton tokens.
         switch (currentChar) {
-            case '(':
+            case '(': {
                 position++;
-                return Token('(');
+                char nextChar = buffer.at(position);
+                while (isWhitespace(nextChar)) {
+                    position++;
+                    nextChar = buffer.at(position);
+                }
+                if (nextChar == ')') {
+                    position++;
+                    return Token("nil");
+                } else {
+                    return Token('(');
+                }
                 break;
+            }
             case ')':
                 position++;
                 return Token(')');

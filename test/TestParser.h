@@ -1,21 +1,34 @@
 #include "../src/Parser.h"
 
+void Parser::runTests() {
+    printExpression_test1(); // TEST1 TEST2 TEST3
+    std::cout << std::endl;
+    printExpression_test2(); // (ROOT TEST1 TEST2 TEST3)
+    std::cout << std::endl;
+    printExpression_test3(); // (3 5 (XYZ) 7)
+    std::cout << std::endl;
+    printExpression_test4(); // (NIL 5 () (()) 7 (() 9 ()) )
+    std::cout << std::endl;
+    printExpression_test5(); // (DEFUN F23 (X) (PLUS X 12 15))
+    std::cout << std::endl;
+}
+
 /**
  * TEST WITH INPUT: TEST1 TEST2 TEST3
  * EXPECTED RESULT: Separate expressions; each in atom (not list) form.
  */
 void Parser::printExpression_test1() {
     Toolkit::info("Parser::printExpression() TEST ONE");
+    Toolkit::info("TEST1 TEST2 TEST3");
     ExpressionTreeNode *root = new ExpressionTreeNode();
     ExpressionTreeNode *rootLeaf0 = new ExpressionTreeNode();
     rootLeaf0->atom = Token("TEST1");
     root->leftChild = rootLeaf0;
-    root->isList = false;
 
     std::string result = printExpression(root, IS_ATOM);
 
     std::string expected = "TEST1";
-    Toolkit::debug(result);
+    Toolkit::debug(result + "\n");
     if (result.compare(expected) != 0) {
         Toolkit::error("FAILURE");
         Toolkit::errorDetail("Expected: " + expected);
@@ -27,7 +40,7 @@ void Parser::printExpression_test1() {
     rootLeaf0->atom = Token("TEST2");
     result = printExpression(root, IS_ATOM);
     expected = "TEST2";
-    Toolkit::debug(result);
+    Toolkit::debug(result + "\n");
     if (result.compare(expected) != 0) {
         Toolkit::error("FAILURE");
         Toolkit::errorDetail("Expected: " + expected);
@@ -39,7 +52,7 @@ void Parser::printExpression_test1() {
     rootLeaf0->atom = Token("TEST3");
     result = printExpression(root, IS_ATOM);
     expected = "TEST3";
-    Toolkit::debug(result);
+    Toolkit::debug(result + "\n");
     if (result.compare(expected) != 0) {
         Toolkit::error("FAILURE");
         Toolkit::errorDetail("Expected: " + expected);
@@ -57,6 +70,7 @@ void Parser::printExpression_test1() {
  */
 void Parser::printExpression_test2() {
     Toolkit::info("Parser::printExpression() TEST TWO");
+    Toolkit::info("(ROOT TEST1 TEST2 TEST3)");
     ExpressionTreeNode *root = new ExpressionTreeNode();
 
     ExpressionTreeNode *rootLeaf0 = new ExpressionTreeNode();
@@ -100,6 +114,7 @@ void Parser::printExpression_test2() {
  */
 void Parser::printExpression_test3() {
     Toolkit::info("Parser::printExpression() TEST THREE");
+    Toolkit::info("(3 5 (XYZ) 7)");
 
     ExpressionTreeNode *Node3 = new ExpressionTreeNode();
     ExpressionTreeNode *Node5 = new ExpressionTreeNode();
@@ -151,6 +166,7 @@ void Parser::printExpression_test3() {
  */
 void Parser::printExpression_test4() {
     Toolkit::info("Parser::printExpression() TEST FOUR");
+    Toolkit::info("(NIL 5 () (()) 7 (() 9 ()) )");
 
     ExpressionTreeNode *nodeNIL = new ExpressionTreeNode();
     ExpressionTreeNode *node5 = new ExpressionTreeNode();
@@ -216,6 +232,7 @@ void Parser::printExpression_test4() {
  */
 void Parser::printExpression_test5() {
     Toolkit::info("Parser::printExpression() TEST FIVE");
+    Toolkit::info("(DEFUN F23 (X) (PLUS X 12 15))");
 
     ExpressionTreeNode *nodeNIL = new ExpressionTreeNode();
     ExpressionTreeNode *nodeDEFUN = new ExpressionTreeNode();
