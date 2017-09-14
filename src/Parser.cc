@@ -107,7 +107,6 @@ std::string Parser::printExpression(ExpressionTreeNode *root, bool isList) {
 
     if (root) {
         if (root->leftChild) {
-
             result.append("(");
             result.append(printExpression(root->leftChild, IS_NOT_ATOM));
             result.append(" . ");
