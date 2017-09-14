@@ -26,7 +26,6 @@ void Parser::printTokens() {
  */
 void Parser::start() {
     do {
-
         if (isAtom(scanner.getCurrentToken())) {
             std::cout << scanner.getCurrentToken().repr() << std::endl;
             scanner.moveToNextToken();
@@ -62,7 +61,6 @@ void Parser::parseExpression(ExpressionTreeNode *root) {
     if (isAtom(scanner.getCurrentToken())) {
         // In this case, we have an atom. Construct a ETN with the left child
         // containing the atom itself; the right child remains NIL.
-        // std::cout << "atom: " << scanner.getCurrentToken().repr() << std::endl;
         ExpressionTreeNode *newAtomicNode = new ExpressionTreeNode();
         newAtomicNode->atom = scanner.getCurrentToken();
         current->leftChild = newAtomicNode;

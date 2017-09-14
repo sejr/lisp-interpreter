@@ -29,8 +29,10 @@ int main(int argc, char** argv) {
         if (inputFile) {
             fileBuffer = readFileToBuffer(inputFile);
         } else {
-            std::cout << "There was an issue opening the lisp file." << std::endl;
-            std::cout << "Please make sure the file name was typed correctly." << std::endl;
+            std::cout << "There was an issue opening the lisp file." 
+                      << std::endl;
+            std::cout << "Please make sure the file name was typed correctly." 
+                      << std::endl;
         }
     } else {
         fileBuffer = readFileToBuffer(std::cin);
@@ -39,8 +41,6 @@ int main(int argc, char** argv) {
     unsigned int scannerOrigin = 0;
     LexicalAnalyzer l = LexicalAnalyzer(fileBuffer, scannerOrigin);
     Parser p = Parser(l);
-    // p.runTests();
-    // std::cout << "\n\n";
     p.start();
 
     return 0;

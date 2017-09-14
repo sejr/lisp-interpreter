@@ -7,7 +7,7 @@ TokenProfile::TokenProfile() {
     closeParenCount = 0;
 }
 
-// This is the preferred way for generating a token profile; we provide a sequence
+// This is the preferred way for generating a token profile; we provide a list
 // of tokens, which this module uses to construct a more robust TokenProfile.
 TokenProfile::TokenProfile(std::vector<Token> tokens) {
     openParenCount = 0;
@@ -25,15 +25,14 @@ TokenProfile::TokenProfile(std::vector<Token> tokens) {
         } else if (t.getTokenType() == TokenType::parenClose) {
             closeParenCount++;
         } else if (t.getTokenType() == TokenType::error) {
-            // std::cout << "Error on token: " << t.repr() << std::endl << std::endl;
             containsError = true;
         }
     }
 }
 
 // This is primarily just for the sake of the assignment, but it does give the
-// user a pretty nice glance at the nature of the lisp program that was passed to the
-// interpreter. I imagine this will be more fleshed-out through the duration of the course.
+// user a pretty nice glance at the nature of the lisp program that was passed 
+// to the interpreter. This may be more fleshed-out throughout the course.
 void TokenProfile::displayTokenInfo() {
     if (containsError) {
         std::cout << "ERROR: Invalid token ";
@@ -55,7 +54,8 @@ void TokenProfile::displayTokenInfo() {
         for (unsigned int i = 0; i < numericAtoms.size(); i++) {
             sum += std::stoi(numericAtoms.at(i).repr());
         }
-        std::cout << std::to_string((long long int) /* for stdlinux compatibility? */ sum) << std::endl;
+
+        std::cout << std::to_string((long long int) sum) << std::endl;
         
         std::cout << "OPEN PARENTHESES: " << openParenCount << std::endl;
         std::cout << "CLOSING PARENTHESES: " << closeParenCount << std::endl;

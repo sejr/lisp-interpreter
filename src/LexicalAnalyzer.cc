@@ -30,9 +30,12 @@ Token LexicalAnalyzer::getCurrentToken() {
   return tokens.at(position);
 }
 
-// This is the preferred way of generating token vectors, which uses a tracked position
-// value to continue through a buffer, returning individual tokens one at a time.
-Token LexicalAnalyzer::getTokenAtPosition(std::vector<char> &buffer, unsigned int &position) {
+// Preferred way of generating token vectors, which uses a tracked position 
+// to continue through a buffer, returning individual tokens one at a time.
+Token LexicalAnalyzer::getTokenAtPosition (
+    std::vector<char> &buffer, 
+    unsigned int &position
+) {
     if (position < buffer.size()) {
         std::string temp; // for literal / numeric atoms
         char currentChar = buffer.at(position);
