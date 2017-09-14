@@ -107,32 +107,18 @@ std::string Parser::printExpression(ExpressionTreeNode *root, bool isList) {
 
     if (root) {
         if (root->leftChild) {
-            if (root->leftChild->atom.repr().compare("NIL") != 0) {
-                // We have a real atom; not a placeholder.
-                result.append("(");
-                result.append(root->leftChild->atom.repr());
-                if (root->rightChild) {
-                    result.append(" . ");
-                    result.append(printExpression(root->rightChild,
-                        IS_NOT_ATOM));
-                    result.append(")");
-                } else {
-                    // If there's no more list to check, expand the last
-                    // atom into its own identifying list: (ATOM . NIL)
-                    result.append(" . ");
-                    result.append("NIL");
-                    result.append(")");
-                }
-            } else {
-                // We have the start of a new list.
-                result.append("(");
-                result.append(printExpression(root->leftChild, IS_NOT_ATOM));
-                result.append(" . ");
+
+            result.append("(");
+            result.append(printExpression(root->leftChild, IS_NOT_ATOM));
+            result.append(" . ");
+            if (root->rightChild) {
                 result.append(printExpression(root->rightChild, IS_NOT_ATOM));
-                result.append(")");
+            } else {
+                result.append("NIL");
             }
+            result.append(")");
         } else {
-            result.append("NIL");
+            result.append(root->atom.repr());
         }
     }
 
