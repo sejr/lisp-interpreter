@@ -14,9 +14,6 @@
 #include "Token.h"
 #include "LexicalAnalyzer.h"
 
-#define IS_ATOM true
-#define IS_NOT_ATOM false
-
 struct ExpressionTreeNode {
     Token atom;
     ExpressionTreeNode *leftChild;
@@ -29,9 +26,13 @@ struct ExpressionTreeNode {
 
 class Parser {
 private:
-    bool isList;
     LexicalAnalyzer scanner;
     bool isAtom(Token t);
+
+    void _parseExpression(ExpressionTreeNode *root);
+    ExpressionTreeNode* car(ExpressionTreeNode *root);
+    ExpressionTreeNode* cdr(ExpressionTreeNode *root);
+
     void printExpression_test1();
     void printExpression_test2();
     void printExpression_test3();
@@ -44,8 +45,8 @@ public:
     void start();
     void runTests();
     void printTokens();
-    void parseExpression(ExpressionTreeNode *root);
-    std::string printExpression(ExpressionTreeNode *root, bool isList);
+    ExpressionTreeNode* parseExpression(ExpressionTreeNode *root);
+    std::string printExpression(ExpressionTreeNode *root);
 };
 
 #endif

@@ -25,7 +25,7 @@ void Parser::printExpression_test1() {
     rootLeaf0->atom = Token("TEST1");
     root->leftChild = rootLeaf0;
 
-    std::string result = printExpression(root, IS_ATOM);
+    std::string result = printExpression(root);
 
     std::string expected = "TEST1";
     Toolkit::debug(result + "\n");
@@ -38,7 +38,7 @@ void Parser::printExpression_test1() {
     std::cout << std::endl;
 
     rootLeaf0->atom = Token("TEST2");
-    result = printExpression(root, IS_ATOM);
+    result = printExpression(root);
     expected = "TEST2";
     Toolkit::debug(result + "\n");
     if (result.compare(expected) != 0) {
@@ -50,7 +50,7 @@ void Parser::printExpression_test1() {
     std::cout << std::endl;
 
     rootLeaf0->atom = Token("TEST3");
-    result = printExpression(root, IS_ATOM);
+    result = printExpression(root);
     expected = "TEST3";
     Toolkit::debug(result + "\n");
     if (result.compare(expected) != 0) {
@@ -95,7 +95,7 @@ void Parser::printExpression_test2() {
     firstChild->rightChild = secondChild;
     root->rightChild = firstChild;
 
-    std::string result = printExpression(root, IS_NOT_ATOM);
+    std::string result = printExpression(root);
     std::string expected = "(ROOT . (TEST1 . (TEST2 . (TEST3 . NIL))))";
 
     Toolkit::debug(result);
@@ -147,7 +147,7 @@ void Parser::printExpression_test3() {
     root->leftChild = Node3;
     root->rightChild = Parent_5_PXYZ7;
 
-    std::string result = printExpression(root, IS_NOT_ATOM);
+    std::string result = printExpression(root);
     std::string expected = "(3 . (5 . ((XYZ . NIL) . (7 . NIL))))";
 
     Toolkit::debug(result);
@@ -213,7 +213,7 @@ void Parser::printExpression_test4() {
     root->leftChild = nodeNIL;
     root->rightChild = P_5_ETC;
 
-    std::string result = printExpression(root, IS_NOT_ATOM);
+    std::string result = printExpression(root);
     std::string expected = "(NIL . (5 . (NIL . ((NIL . NIL) . (7 . ((NIL . (9 . (NIL . NIL))) . NIL))))))";
 
     Toolkit::debug(result);
@@ -285,7 +285,7 @@ void Parser::printExpression_test5() {
     root->leftChild = nodeDEFUN;
     root->rightChild = FNAME_FBODY;
 
-    std::string result = printExpression(root, IS_NOT_ATOM);
+    std::string result = printExpression(root);
     std::string expected = "(DEFUN . (F23 . ((X . NIL) . ((PLUS . (X . (12 . (55 . NIL)))) . NIL))))";
 
     Toolkit::debug(result);
