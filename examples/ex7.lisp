@@ -1,3 +1,7 @@
+(123)
+(ABC)
+(NIL)
+(())
 (PLUS S1 S2)
 (MINUS S3 S4)
 (INT (PLUS S5 (MINUS S6 S7)))

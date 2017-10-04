@@ -27,16 +27,47 @@ void Parser::printTokens() {
 void Parser::start() {
     do {
         if (isAtom(scanner.getCurrentToken())) {
-            std::cout << scanner.getCurrentToken().repr() << std::endl;
+            // std::cout << scanner.getCurrentToken().repr() << std::endl;
             scanner.moveToNextToken();
         } else {
             ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
-            std::cout << printExpression(root) << std::endl;
+            std::cout << printExpression(root) << std::endl << std::endl;
 
-            ExpressionTreeNode *carResult = car(root);
-            ExpressionTreeNode *cdrResult = cdr(root);
-            std::cout << printExpression(carResult) << std::endl;
-            std::cout << printExpression(cdrResult) << std::endl << std::endl;
+            std::cout << "> len:        " << len(root) << std::endl;
+
+            ExpressionTreeNode *carResult  = car(root);
+            ExpressionTreeNode *cdrResult  = cdr(root);
+            ExpressionTreeNode *consResult = cons(carResult, cdrResult);
+
+            std::cout << "> car:        " << printExpression(carResult) << std::endl;
+            std::cout << "> cdr:        " << printExpression(cdrResult) << std::endl;
+            std::cout << "> cons:       " << printExpression(consResult) << std::endl;
+
+            ExpressionTreeNode *rootAtomResult = atom(root);
+            ExpressionTreeNode *carAtomResult = atom(carResult);
+            ExpressionTreeNode *cdrAtomResult = atom(carResult);
+
+            ExpressionTreeNode *nullAtomResult = null(root);
+            ExpressionTreeNode *litAtomResult = lit(root);
+            ExpressionTreeNode *numAtomResult = num(root);
+
+            if (treeToBool(rootAtomResult)) {
+                std::cout << "> atom" << std::endl;
+            }
+
+            if (treeToBool(nullAtomResult)) {
+                std::cout << "> null atom" << std::endl;
+            }
+
+            if (treeToBool(litAtomResult)) {
+                std::cout << "> literal atom" << std::endl;
+            }
+
+            if (treeToBool(numAtomResult)) {
+                std::cout << "> numeric atom" << std::endl;
+            }
+            
+            std::cout << std::endl;
         }
 
     } while (scanner.getCurrentToken().getTokenType() != eof);
@@ -138,6 +169,65 @@ bool Parser::isAtom(Token t) {
            t.getTokenType() == nil;
 }
 
+int Parser::len(ExpressionTreeNode *root) {
+    int result = 0;
+    if (root) {
+        if (root->leftChild && root->leftChild->atom.getTokenType() != nil) {
+            result += 1;
+            if (root->rightChild) {
+                result += len(root->rightChild);
+            }
+            return result;
+        } else {
+            return result;
+        }
+    } else {
+        return result;
+    }
+}
+
+bool Parser::treeToBool(ExpressionTreeNode *root) {
+    if (root) {
+        if (root->leftChild) {
+            ExpressionTreeNode *left = root->leftChild;
+            if (left->atom.getTokenType() == atomLiteral ||
+                left->atom.getTokenType() == atomNumeric) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Returns a new T node.
+ */
+ExpressionTreeNode* Parser::nodeT() {
+    ExpressionTreeNode *result = new ExpressionTreeNode();
+    ExpressionTreeNode *value = new ExpressionTreeNode();
+    value->atom = Token("T");
+    result->leftChild = value;
+    result->rightChild = new ExpressionTreeNode();
+    return result;
+}
+
+/**
+ * Returns a new NIL node.
+ */
+ExpressionTreeNode* Parser::nodeNIL() {
+    ExpressionTreeNode *result = new ExpressionTreeNode();
+    ExpressionTreeNode *value = new ExpressionTreeNode();
+    value->atom = Token("nil");
+    result->leftChild = value;
+    result->rightChild = new ExpressionTreeNode();
+    return result;
+}
+
 /**
  * Implementation of the Lisp CAR function which returns the head of a list.
  */
@@ -156,7 +246,7 @@ ExpressionTreeNode* Parser::car(ExpressionTreeNode *root) {
 }
 
 /**
- * Implementation of the Lisp CDR function which returns the tail of a list.
+ * Implementation of the lisp CDR function which returns the tail of a list.
  */
 ExpressionTreeNode* Parser::cdr(ExpressionTreeNode *root) {
     if (root) {
@@ -170,4 +260,202 @@ ExpressionTreeNode* Parser::cdr(ExpressionTreeNode *root) {
         ExpressionTreeNode *undefined = new ExpressionTreeNode();
         return undefined;
     }  
+}
+
+/**
+ * Implementation of the lisp CONS function, which returns a binary tree where
+ * the left child is the first parameter, and the right child is the second.
+ */
+ExpressionTreeNode* Parser::cons(ExpressionTreeNode *left, ExpressionTreeNode *right) {
+    ExpressionTreeNode *result = new ExpressionTreeNode();
+    result->leftChild = left;
+    result->rightChild = right;
+    return result;
+}
+
+/**
+ * T if root contains atom; NIL otherwise.
+ */
+ExpressionTreeNode* Parser::atom(ExpressionTreeNode *root) {
+    if (root) {
+        // std::cout << "root" << std::endl;
+        if (root->leftChild) {
+            // std::cout << "root->leftChild" << std::endl;
+            ExpressionTreeNode *left = root->leftChild;
+            if (isAtom(left->atom)) {
+                // std::cout << "left->atom" << std::endl;
+                if (root->rightChild) {
+                    // std::cout << "root->rightChild" << std::endl;
+                    ExpressionTreeNode *right = root->rightChild;
+                    if (right->atom.getTokenType() == nil) {
+                        if (!right->leftChild && !right->rightChild) {
+                            return nodeT();
+                        } else {
+                            return nodeNIL();
+                        }
+                    } else {
+                        return nodeNIL();
+                    }
+                } else {
+                    return nodeNIL();
+                }
+            } else {
+                return nodeNIL();
+            }
+        } else {
+            return nodeNIL();
+        }
+    } else {
+        return nodeNIL();
+    }
+}
+
+/**
+ * T if root contains numeric atom; NIL otherwise.
+ */
+ExpressionTreeNode* Parser::num(ExpressionTreeNode *root) {
+    if (root) {
+        // std::cout << "root" << std::endl;
+        if (root->leftChild) {
+            // std::cout << "root->leftChild" << std::endl;
+            ExpressionTreeNode *left = root->leftChild;
+            if (left->atom.getTokenType() == atomNumeric) {
+                // std::cout << "left->atom" << std::endl;
+                if (root->rightChild) {
+                    // std::cout << "root->rightChild" << std::endl;
+                    ExpressionTreeNode *right = root->rightChild;
+                    if (right->atom.getTokenType() == nil) {
+                        if (!right->leftChild && !right->rightChild) {
+                            return nodeT();
+                        } else {
+                            return nodeNIL();
+                        }
+                    } else {
+                        return nodeNIL();
+                    }
+                } else {
+                    return nodeNIL();
+                }
+            } else {
+                return nodeNIL();
+            }
+        } else {
+            return nodeNIL();
+        }
+    } else {
+        return nodeNIL();
+    }
+}
+
+ExpressionTreeNode* Parser::lit(ExpressionTreeNode *root) {
+    if (root) {
+        // std::cout << "root" << std::endl;
+        if (root->leftChild) {
+            // std::cout << "root->leftChild" << std::endl;
+            ExpressionTreeNode *left = root->leftChild;
+            if (left->atom.getTokenType() == atomLiteral) {
+                // std::cout << "left->atom" << std::endl;
+                if (root->rightChild) {
+                    // std::cout << "root->rightChild" << std::endl;
+                    ExpressionTreeNode *right = root->rightChild;
+                    if (right->atom.getTokenType() == nil) {
+                        if (!right->leftChild && !right->rightChild) {
+                            return nodeT();
+                        } else {
+                            return nodeNIL();
+                        }
+                    } else {
+                        return nodeNIL();
+                    }
+                } else {
+                    return nodeNIL();
+                }
+            } else {
+                return nodeNIL();
+            }
+        } else {
+            return nodeNIL();
+        }
+    } else {
+        return nodeNIL();
+    }
+}
+
+/**
+ * T if root contains NIL; NIL otherwise.
+ */
+ExpressionTreeNode* Parser::null(ExpressionTreeNode *root) {
+    if (root) {
+        // std::cout << "root" << std::endl;
+        if (root->leftChild) {
+            // std::cout << "root->leftChild" << std::endl;
+            ExpressionTreeNode *left = root->leftChild;
+            if (left->atom.getTokenType() == nil) {
+                // std::cout << "left->atom" << std::endl;
+                if (root->rightChild) {
+                    // std::cout << "root->rightChild" << std::endl;
+                    ExpressionTreeNode *right = root->rightChild;
+                    if (right->atom.getTokenType() == nil) {
+                        if (!right->leftChild && !right->rightChild) {
+                            return nodeT();
+                        } else {
+                            return nodeNIL();
+                        }
+                    } else {
+                        return nodeNIL();
+                    }
+                } else {
+                    return nodeNIL();
+                }
+            } else {
+                return nodeNIL();
+            }
+        } else {
+            return nodeNIL();
+        }
+    } else {
+        return nodeNIL();
+    }
+}
+
+/**
+ * T if a and b are equal (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::eq(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
+}
+
+/**
+ * T if a > b (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::greater(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
+}
+
+/**
+ * T if a < b (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::less(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
+}
+
+/**
+ * Numeric result of a + b (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::plus(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
+}
+
+/**
+ * Numeric result of a - b (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::minus(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
+}
+
+/**
+ * Numeric result of a * b (checking for numeric atoms); NIL otherwise.
+ */
+ExpressionTreeNode* Parser::times(ExpressionTreeNode *a, ExpressionTreeNode *b) {
+    return nodeNIL();
 }

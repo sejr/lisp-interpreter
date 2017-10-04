@@ -46,7 +46,7 @@ Token::Token(std::string literalAtom) {
     } else if (literalAtom == "whitespace") {
         m_type = whitespace;
         m_isNil = false;
-    } else if (literalAtom == "nil"){
+    } else if (literalAtom == "nil" || literalAtom == "NIL"){
         m_type = nil;
         m_isNil = true;
     } else {

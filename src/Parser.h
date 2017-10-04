@@ -29,10 +29,38 @@ private:
     LexicalAnalyzer scanner;
     bool isAtom(Token t);
 
+    // Parsing helper function
     void _parseExpression(ExpressionTreeNode *root);
+
+    // List length utility
+    int len(ExpressionTreeNode *root);
+
+    // List operators
     ExpressionTreeNode* car(ExpressionTreeNode *root);
     ExpressionTreeNode* cdr(ExpressionTreeNode *root);
+    ExpressionTreeNode* atom(ExpressionTreeNode *root);
+    ExpressionTreeNode* num(ExpressionTreeNode *root);
+    ExpressionTreeNode* lit(ExpressionTreeNode *root);
+    ExpressionTreeNode* null(ExpressionTreeNode *root);
+    ExpressionTreeNode* cons(ExpressionTreeNode *left, 
+        ExpressionTreeNode *right);
 
+    // Numeric operators
+    ExpressionTreeNode* plus(ExpressionTreeNode *a, ExpressionTreeNode *b);
+    ExpressionTreeNode* minus(ExpressionTreeNode *a, ExpressionTreeNode *b);
+    ExpressionTreeNode* times(ExpressionTreeNode *a, ExpressionTreeNode *b);
+
+    // Boolean operators
+    ExpressionTreeNode* eq(ExpressionTreeNode *a, ExpressionTreeNode *b);
+    ExpressionTreeNode* less(ExpressionTreeNode *a, ExpressionTreeNode *b);
+    ExpressionTreeNode* greater(ExpressionTreeNode *a, ExpressionTreeNode *b);
+
+    ExpressionTreeNode *nodeT();
+    ExpressionTreeNode *nodeNIL();
+
+    bool treeToBool(ExpressionTreeNode *root);
+
+    // Basic test suite (test/TestParser.h)
     void printExpression_test1();
     void printExpression_test2();
     void printExpression_test3();
