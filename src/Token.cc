@@ -32,6 +32,14 @@ Token::Token(int numericAtom) {
     m_isNil = false;
 }
 
+int Token::getNumeric() {
+    if (m_numericAtom) {
+        return m_numericAtom;
+    } else {
+        return 0;
+    }
+}
+
 // This generates a token instance with an associated integer value.
 // We also incorporate meta tokens through this interface, including
 // those for error, EOF, and whitespace.

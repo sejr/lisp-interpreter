@@ -31,46 +31,105 @@ void Parser::start() {
             scanner.moveToNextToken();
         } else {
             ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
-            std::cout << printExpression(root) << std::endl << std::endl;
-
-            std::cout << "> len:        " << len(root) << std::endl;
-
-            ExpressionTreeNode *carResult  = car(root);
-            ExpressionTreeNode *cdrResult  = cdr(root);
-            ExpressionTreeNode *consResult = cons(carResult, cdrResult);
-
-            std::cout << "> car:        " << printExpression(carResult) << std::endl;
-            std::cout << "> cdr:        " << printExpression(cdrResult) << std::endl;
-            std::cout << "> cons:       " << printExpression(consResult) << std::endl;
-
-            ExpressionTreeNode *rootAtomResult = atom(root);
-            ExpressionTreeNode *carAtomResult = atom(carResult);
-            ExpressionTreeNode *cdrAtomResult = atom(carResult);
-
-            ExpressionTreeNode *nullAtomResult = null(root);
-            ExpressionTreeNode *litAtomResult = lit(root);
-            ExpressionTreeNode *numAtomResult = num(root);
-
-            if (treeToBool(rootAtomResult)) {
-                std::cout << "> atom" << std::endl;
-            }
-
-            if (treeToBool(nullAtomResult)) {
-                std::cout << "> null atom" << std::endl;
-            }
-
-            if (treeToBool(litAtomResult)) {
-                std::cout << "> literal atom" << std::endl;
-            }
-
-            if (treeToBool(numAtomResult)) {
-                std::cout << "> numeric atom" << std::endl;
-            }
-            
-            std::cout << std::endl;
+            ExpressionTreeNode *evaluatedRoot = evaluateExpression(root);
+            std::cout << printExpression(evaluatedRoot) << std::endl;
         }
 
     } while (scanner.getCurrentToken().getTokenType() != eof);
+}
+
+ExpressionTreeNode* Parser::evaluateExpression(ExpressionTreeNode *root) {
+    // std::cout << "Inside evaluateExpression()" << std::endl;
+    ExpressionTreeNode *carResult = car(root);
+    ExpressionTreeNode *cdrResult = cdr(root);
+    // std::cout << "> car: " << printExpression(carResult) << std::endl;
+    // std::cout << "> cdr: " << printExpression(cdrResult) << std::endl;
+    std::string op = carResult->atom.repr();
+
+    if (treeToBool(atom(root))) {
+        if (treeToBool(lit(root)) ||
+            treeToBool(num(root)) ||
+            treeToBool(null(root))){
+
+            return root;
+        } else {
+            std::cerr << "\nERROR: Unexpected atom: " << printExpression(root);
+            exit(EXIT_FAILURE);
+        }
+    } else if (op.compare("ATOM") == 0) {
+        return atom(evaluateExpression(cdrResult));
+    } else if (op.compare("PLUS") == 0) {
+        return plus(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("MINUS") == 0) {
+        return minus(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("TIMES") == 0) {
+        return times(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("LESS") == 0) {
+        return less(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("GREATER") == 0) {
+        return greater(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("EQ") == 0) {
+        return eq(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    } else if (op.compare("CAR") == 0) {
+        return car(car(evaluateExpression(cdrResult)));
+    } else if (op.compare("CDR") == 0) {
+        return cdr(car(evaluateExpression(cdrResult)));
+    } else if (op.compare("QUOTE") == 0) {
+        return car(cdrResult);
+    } else if (op.compare("CONS") == 0) {
+        return cons(evaluateExpression(cdrResult), evaluateExpression(cdr(cdrResult)));
+    } else {
+        return nodeNIL();
+    }
+
+    // if (treeToBool(atom(carResult))) {
+    //     std::cout << "Hit singleton atom" << std::endl;
+    //     return nodeNIL();
+    // } else {
+    //     if (treeToBool(atom(root))) {
+    //         std::cout << "root is an atom" << std::endl;
+    //         if (treeToBool(lit(root)) ||
+    //             treeToBool(num(root)) ||
+    //             treeToBool(null(root))){
+
+    //             std::cout << "root is valid" << std::endl;
+    //             return root;
+    //         } else {
+    //             std::cerr << "\nERROR: Unexpected atom: " << printExpression(root);
+    //             exit(EXIT_FAILURE);
+    //         }
+    //     } else if (op.compare("ATOM")) {
+    //         std::cout << "cdrResult: " << printExpression(cdrResult) << std::endl;
+    //         std::cout << "root is (ATOM s1)" << std::endl;
+    //         return atom(evaluateExpression(cdrResult));
+    //     } else if (op.compare("PLUS")) {
+    //         std::cout << "root is (PLUS s1 s2)" << std::endl;
+    //         return plus(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("MINUS")) {
+    //         std::cout << "root is (MINUS s1 s2)" << std::endl;
+    //         return minus(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("TIMES")) {
+    //         std::cout << "root is (TIMES s1 s2)" << std::endl;
+    //         return times(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("LESS")) {
+    //         std::cout << "root is (LESS s1 s2)" << std::endl;
+    //         return less(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("GREATER")) {
+    //         std::cout << "root is (GREATER s1 s2)" << std::endl;
+    //         return greater(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("EQ")) {
+    //         std::cout << "root is (EQ s1 s2)" << std::endl;
+    //         return eq(evaluateExpression(car(cdrResult)), evaluateExpression(cdr(cdrResult)));
+    //     } else if (op.compare("CAR") == 0) {
+    //         std::cout << "root is (CAR s1)" << std::endl;
+    //         return car(evaluateExpression(cdrResult));
+    //     } else if (op.compare("CDR") == 0) {
+    //         std::cout << "root is (CDR s1)" << std::endl;
+    //         return cdr(evaluateExpression(cdrResult));
+    //     } else {
+    //         return nodeNIL();
+    //     }
+    // }
 }
 
 ExpressionTreeNode* Parser::parseExpression(ExpressionTreeNode *root) {
@@ -172,7 +231,9 @@ bool Parser::isAtom(Token t) {
 int Parser::len(ExpressionTreeNode *root) {
     int result = 0;
     if (root) {
-        if (root->leftChild && root->leftChild->atom.getTokenType() != nil) {
+        if (treeToBool(null(root))) {
+            return result; // Handle NIL / empty
+        } else if (root->leftChild) {
             result += 1;
             if (root->rightChild) {
                 result += len(root->rightChild);
@@ -182,7 +243,8 @@ int Parser::len(ExpressionTreeNode *root) {
             return result;
         }
     } else {
-        return result;
+        std::cerr << "\nERROR: Function len() must be called on a list. ";
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -422,40 +484,162 @@ ExpressionTreeNode* Parser::null(ExpressionTreeNode *root) {
  * T if a and b are equal (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::eq(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if ((treeToBool(lit(a)) && treeToBool(lit(b))) ||
+        (treeToBool(num(a)) && treeToBool(num(b)))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+
+        bool eqFlag = aToken->atom.repr().compare(bToken->atom.repr());
+
+        if (eqFlag == 0) {
+            return nodeT();
+        } else {
+            return nodeNIL();
+        }
+
+    } else {
+        std::cerr << "\nERROR: Call to EQ does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (EQ <int> <int>)" << std::endl;
+        std::cerr << "> (EQ <literal> <literal>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
  * T if a > b (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::greater(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if (treeToBool(num(a)) && treeToBool(num(b))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+        int aValue = aToken->atom.getNumeric();
+        int bValue = bToken->atom.getNumeric();
+
+        if (aValue > bValue) {
+            return nodeT();
+        } else {
+            return nodeNIL();
+        }
+
+    } else {
+        std::cerr << "\nERROR: Call to GREATER does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (GREATER <int> <int>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
  * T if a < b (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::less(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if (treeToBool(num(a)) && treeToBool(num(b))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+        int aValue = aToken->atom.getNumeric();
+        int bValue = bToken->atom.getNumeric();
+
+        if (aValue < bValue) {
+            return nodeT();
+        } else {
+            return nodeNIL();
+        }
+
+    } else {
+        std::cerr << "\nERROR: Call to GREATER does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (GREATER <int> <int>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
  * Numeric result of a + b (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::plus(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if (treeToBool(num(a)) && treeToBool(num(b))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+        int aValue = aToken->atom.getNumeric();
+        int bValue = bToken->atom.getNumeric();
+        int result = aValue + bValue;
+
+        ExpressionTreeNode *resultTree = new ExpressionTreeNode();
+        ExpressionTreeNode *resultValue = new ExpressionTreeNode();
+        resultValue->atom = Token(result);
+        resultTree->leftChild = resultValue;
+        resultTree->rightChild = new ExpressionTreeNode();
+        return resultTree;
+
+    } else {
+        std::cerr << "\nERROR: Call to PLUS does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (PLUS <int> <int>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
  * Numeric result of a - b (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::minus(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if (treeToBool(num(a)) && treeToBool(num(b))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+        int aValue = aToken->atom.getNumeric();
+        int bValue = bToken->atom.getNumeric();
+        int result = aValue - bValue;
+
+        ExpressionTreeNode *resultTree = new ExpressionTreeNode();
+        ExpressionTreeNode *resultValue = new ExpressionTreeNode();
+        resultValue->atom = Token(result);
+        resultTree->leftChild = resultValue;
+        resultTree->rightChild = new ExpressionTreeNode();
+        return resultTree;
+
+    } else {
+        std::cerr << "\nERROR: Call to MINUS does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (MINUS <int> <int>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
  * Numeric result of a * b (checking for numeric atoms); NIL otherwise.
  */
 ExpressionTreeNode* Parser::times(ExpressionTreeNode *a, ExpressionTreeNode *b) {
-    return nodeNIL();
+    if (treeToBool(num(a)) && treeToBool(num(b))) {
+
+        ExpressionTreeNode *aToken = a->leftChild;
+        ExpressionTreeNode *bToken = b->leftChild;
+        int aValue = aToken->atom.getNumeric();
+        int bValue = bToken->atom.getNumeric();
+        int result = aValue * bValue;
+
+        ExpressionTreeNode *resultTree = new ExpressionTreeNode();
+        ExpressionTreeNode *resultValue = new ExpressionTreeNode();
+        resultValue->atom = Token(result);
+        resultTree->leftChild = resultValue;
+        resultTree->rightChild = new ExpressionTreeNode();
+        return resultTree;
+
+    } else {
+        std::cerr << "\nERROR: Call to TIMES does not satisfy any existing call signature. ";
+        std::cerr << "Valid options include:" << std::endl;
+        std::cerr << "> (TIMES <int> <int>)" << std::endl;
+
+        exit(EXIT_FAILURE);
+    }
 }

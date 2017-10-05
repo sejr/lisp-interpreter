@@ -35,6 +35,7 @@ public:
 
     TokenType getTokenType();
     std::string repr();
+    int getNumeric();
     bool isNil();
 
 private:

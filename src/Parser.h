@@ -74,6 +74,7 @@ public:
     void runTests();
     void printTokens();
     ExpressionTreeNode* parseExpression(ExpressionTreeNode *root);
+    ExpressionTreeNode* evaluateExpression(ExpressionTreeNode *root);
     std::string printExpression(ExpressionTreeNode *root);
 };
 
