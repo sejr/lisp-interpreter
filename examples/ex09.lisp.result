@@ -1,0 +1,6 @@
+(QUOTE . (123 . NIL))
+123
+ABC
+NIL
+(123 . NIL)
+(INT . (123 . NIL))
