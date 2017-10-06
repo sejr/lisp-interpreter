@@ -32,14 +32,19 @@ bool Parser::isAtom(Token t) {
  */
 void Parser::start() {
     do {
-        if (isAtom(scanner.getCurrentToken())) {
-            // cout << scanner.getCurrentToken().repr() << endl;
-            scanner.moveToNextToken();
-        } else {
-            ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
-            ExpressionTreeNode *evaluatedRoot = evaluator.evaluateExpression(root);
-            cout << printList(evaluatedRoot) << endl;
-        }
+
+        ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
+        ExpressionTreeNode *evaluatedRoot = evaluator.evaluateExpression(root);
+        cout << evaluator.printExpression(evaluatedRoot) << endl;
+        
+        // if (isAtom(scanner.getCurrentToken())) {
+        //     // cout << scanner.getCurrentToken().repr() << endl;
+        //     scanner.moveToNextToken();
+        // } else {
+        //     ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
+        //     ExpressionTreeNode *evaluatedRoot = evaluator.evaluateExpression(root);
+        //     cout << evaluator.printExpression(evaluatedRoot) << endl;
+        // }
 
     } while (scanner.getCurrentToken().getTokenType() != eof);
 }

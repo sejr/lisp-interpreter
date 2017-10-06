@@ -1,16 +1,12 @@
 #include "Evaluator.h"
 
 ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
-    // cout << "inside evaluateExpression with root: " << printExpression(root) << endl;
+    // cout << "LEN(" << printExpression(root) << ") = " << len(root) << endl;
     if (treeToBool(atom(root))) {
-
-        // cout << "atom: " << printExpression(root) << endl;
-
-        if (/* treeToBool(lit(root)) || */
+        if (treeToBool(cons(root, new ExpressionTreeNode)) ||
             treeToBool(num(cons(root, new ExpressionTreeNode()))) ||
             treeToBool(null(cons(root, new ExpressionTreeNode())))) {
 
-            // cout << "num or nil atom: " << printExpression(root) << endl;
             return root;
         } else {
             cerr << "\nERROR: Unexpected atom: " << printExpression(root);
@@ -29,7 +25,7 @@ ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
             cerr << "> (ATOM <s1>)" << endl;
             exit(EXIT_FAILURE);
         }
-        return atom(evaluateExpression(cdrResult));
+        return car(atom(evaluateExpression(cdrResult)));
     } else if (op.compare("NULL") == 0) {
         if (len(root) != 2) {
             cerr << "\nERROR: Call to NULL does not satisfy any existing call signature. ";
@@ -37,8 +33,7 @@ ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
             cerr << "> (NULL <s1>)" << endl;
             exit(EXIT_FAILURE);
         }
-        cout << "len of NULL: " << len(root) << endl;
-        return null(evaluateExpression(cdrResult));
+        return car(null(evaluateExpression(cdrResult)));
     } else if (op.compare("INT") == 0) {
         if (len(root) != 2) {
             cerr << "\nERROR: Call to INT does not satisfy any existing call signature. ";
@@ -46,70 +41,140 @@ ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
             cerr << "> (INT <s1>)" << endl;
             exit(EXIT_FAILURE);
         }
-        // cout << "len of INT: " << len(root) << endl;
-        return num(evaluateExpression(cdrResult));
+        return car(num(evaluateExpression(cdrResult)));
     } else if (op.compare("QUOTE") == 0) {
-        // cout << "enter quote" <<endl;
-        // cout << printExpression(cdrResult) << endl;
-        // cout << printExpression(car(cdrResult)) << endl;
+        if (len(root) != 2) {
+            cerr << "\nERROR: Call to QUOTE does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (QUOTE <s1>)" << endl;
+            exit(EXIT_FAILURE);
+        }
         return car(cdrResult);
     } else if (op.compare("CONS") == 0) {
-        // cout << "len of CONS: " << len(root) << endl;
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to CONS does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (CONS <s1> <s2>)" << endl;
+            exit(EXIT_FAILURE);
+        }
         return cons(evaluateExpression(car(cdrResult)), evaluateExpression(car(cdr(cdrResult))));
     } else if (op.compare("CAR") == 0) {
-        // cout << "len of CAR: " << len(root) << endl;
-        return car(car(evaluateExpression(cdrResult)));
+        if (len(root) != 2) {
+            cerr << "\nERROR: Call to CAR does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (CAR <s1>)" << endl;
+            exit(EXIT_FAILURE);
+        }
+        return car(evaluateExpression(car(cdrResult)));
     } else if (op.compare("CDR") == 0) {
-        // cout << "len of CDR: " << len(root) << endl;
-        return car(cdr(car(evaluateExpression(cdrResult))));
+        if (len(root) != 2) {
+            cerr << "\nERROR: Call to CDR does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (CDR <s1>)" << endl;
+            exit(EXIT_FAILURE);
+        }
+        return cdr(evaluateExpression(car(cdrResult)));
     } else if (op.compare("PLUS") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to PLUS does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (PLUS <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return plus(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
     } else if (op.compare("MINUS") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to MINUS does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (MINUS <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return minus(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
     } else if (op.compare("TIMES") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to TIMES does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (TIMES <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return times(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
     } else if (op.compare("LESS") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to LESS does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (LESS <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return less(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
     } else if (op.compare("GREATER") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to GREATER does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (GREATER <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return greater(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
     } else if (op.compare("EQ") == 0) {
+        if (len(root) != 3) {
+            cerr << "\nERROR: Call to PLUS does not satisfy any existing call signature. ";
+            cerr << "Valid options include:" << endl;
+            cerr << "> (PLUS <s1> <s2)" << endl;
+            exit(EXIT_FAILURE);
+        }
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
         return eq(leftOperand, rightOperand);
+    } else {
+        cerr << "\nERROR: Invalid expression: " << printExpression(root) << endl;
+        exit(EXIT_FAILURE);
     }
 
-    return root;
+    // return root;
 }
 
 int Evaluator::len(ExpressionTreeNode *root) {
     int result = 0;
-    if (root) {
-        if (treeToBool(null(root))) {
-            return result; // Handle NIL / empty
-        } else if (root->leftChild) {
-            result += 1;
-            if (root->rightChild) {
-                result += len(root->rightChild);
-            }
-            return result;
-        } else {
-            return result;
-        }
+
+    if (root->leftChild) {
+        result += 1;
+    }
+
+    if (root->rightChild) {
+        return result + len(root->rightChild);
     } else {
-        cerr << "\nERROR: Function len() must be called on a list. ";
-        exit(EXIT_FAILURE);
+        return result;
     }
 }
+
+// int Evaluator::len(ExpressionTreeNode *root) {
+//     int result = 0;
+//     if (root) {
+//         if (treeToBool(null(root))) {
+//             return result; // Handle NIL / empty
+//         } else if (root->leftChild) {
+//             result += 1;
+//             if (root->rightChild) {
+//                 result += len(root->rightChild);
+//             }
+//             return result;
+//         } else {
+//             return result;
+//         }
+//     } else {
+//         cerr << "\nERROR: Function len() must be called on a list. ";
+//         exit(EXIT_FAILURE);
+//     }
+// }
 
 bool Evaluator::treeToBool(ExpressionTreeNode *root) {
     if (root) {
@@ -117,7 +182,15 @@ bool Evaluator::treeToBool(ExpressionTreeNode *root) {
             ExpressionTreeNode *left = root->leftChild;
             if (left->atom.getTokenType() == atomLiteral ||
                 left->atom.getTokenType() == atomNumeric) {
-                return true;
+                if (left->atom.getTokenType() == atomLiteral) {
+                    if (left->atom.repr().compare("T") == 0) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
             } else {
                 return false;
             }
@@ -205,6 +278,21 @@ ExpressionTreeNode* Evaluator::atom(ExpressionTreeNode *root) {
     if (root) {
         if (len(root) == 0) {
             return nodeT();
+        } else if (len(root) == 1) {
+            ExpressionTreeNode *carResult = car(root);
+            if (carResult->atom.getTokenType() == atomLiteral) {
+                if (carResult->atom.repr().compare("T") == 0) {
+                    return nodeT();
+                } else {
+                    return nodeNIL();
+                }
+            } else if (carResult->atom.getTokenType() == atomNumeric) {
+                return nodeT();
+            } else if (carResult->atom.getTokenType() == nil) {
+                return nodeT();
+            } else {
+                return nodeNIL();
+            }
         } else {
             return nodeNIL();
         }
@@ -503,6 +591,7 @@ ExpressionTreeNode* Evaluator::times(ExpressionTreeNode *a, ExpressionTreeNode *
  * us to print an expression in a way that is understandable to users.
  */
 string Evaluator::printExpression(ExpressionTreeNode *root) {
+
     string result = "";
 
     if (root) {
