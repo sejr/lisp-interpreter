@@ -42,6 +42,8 @@ private:
     ExpressionTreeNode* less(ExpressionTreeNode *a, ExpressionTreeNode *b);
     ExpressionTreeNode* greater(ExpressionTreeNode *a, ExpressionTreeNode *b);
 
+    ExpressionTreeNode* cond(ExpressionTreeNode *root);
+
     ExpressionTreeNode *nodeT();
     ExpressionTreeNode *nodeNIL();
 
