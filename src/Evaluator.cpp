@@ -585,18 +585,12 @@ string Evaluator::printExpression(ExpressionTreeNode *root) {
     string result = "";
 
     if (root) {
-        if (root->leftChild) {
-            result.append("(");
-            result.append(printExpression(root->leftChild));
-            result.append(" . ");
-            if (root->rightChild) {
-                result.append(printExpression(root->rightChild));
-            } else {
-                result.append("NIL");
-            }
-            result.append(")");
-        } else {
+
+        if (treeToBool(atom(root))) {
             result.append(root->atom.repr());
+        } else {
+            result.append("(");
+            result.append(printExpression(car(root)));
         }
     }
 
