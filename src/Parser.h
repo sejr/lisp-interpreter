@@ -12,57 +12,22 @@
 #include <algorithm>
 #include <iterator>
 #include "Token.h"
+#include "Evaluator.h"
 #include "LexicalAnalyzer.h"
+#include "ExpressionTreeNode.h"
 
 using namespace std;
 
-struct ExpressionTreeNode {
-    Token atom;
-    ExpressionTreeNode *leftChild;
-    ExpressionTreeNode *rightChild;
-
-    operator bool() const {
-        return (bool) atom;
-    }
-};
+class Evaluator;
 
 class Parser {
 private:
     LexicalAnalyzer scanner;
+    Evaluator evaluator;
     bool isAtom(Token t);
 
     // Parsing helper function
     void _parseExpression(ExpressionTreeNode *root);
-
-    // List length utility
-    int len(ExpressionTreeNode *root);
-
-    // List operators
-    ExpressionTreeNode* car(ExpressionTreeNode *root);
-    ExpressionTreeNode* cdr(ExpressionTreeNode *root);
-    ExpressionTreeNode* atom(ExpressionTreeNode *root);
-    ExpressionTreeNode* num(ExpressionTreeNode *root);
-    ExpressionTreeNode* lit(ExpressionTreeNode *root);
-    ExpressionTreeNode* null(ExpressionTreeNode *root);
-    ExpressionTreeNode* cons(ExpressionTreeNode *left, 
-        ExpressionTreeNode *right);
-
-    // Numeric operators
-    ExpressionTreeNode* plus(ExpressionTreeNode *a, ExpressionTreeNode *b);
-    ExpressionTreeNode* minus(ExpressionTreeNode *a, ExpressionTreeNode *b);
-    ExpressionTreeNode* times(ExpressionTreeNode *a, ExpressionTreeNode *b);
-
-    // Boolean operators
-    ExpressionTreeNode* eq(ExpressionTreeNode *a, ExpressionTreeNode *b);
-    ExpressionTreeNode* less(ExpressionTreeNode *a, ExpressionTreeNode *b);
-    ExpressionTreeNode* greater(ExpressionTreeNode *a, ExpressionTreeNode *b);
-
-    ExpressionTreeNode *nodeT();
-    ExpressionTreeNode *nodeNIL();
-    ExpressionTreeNode *atomT();
-    ExpressionTreeNode *atomNIL();
-
-    bool treeToBool(ExpressionTreeNode *root);
 
     // Basic test suite (test/TestParser.h)
     void printExpression_test1();
@@ -72,14 +37,13 @@ private:
     void printExpression_test5();
 
 public:
-    Parser(LexicalAnalyzer &l) : scanner(l) {}
+    Parser(LexicalAnalyzer &l, Evaluator &e) : scanner(l), evaluator(e) {}
 
     void start();
     void runTests();
     void printTokens();
     ExpressionTreeNode* parseExpression(ExpressionTreeNode *root);
-    ExpressionTreeNode* evaluateExpression(ExpressionTreeNode *root);
-    std::string printExpression(ExpressionTreeNode *root);
+    static std::string printExpression(ExpressionTreeNode *root);
     std::string printList(ExpressionTreeNode *root);
 };
 

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Parser.h"
+#include "Evaluator.h"
 #include "LexicalAnalyzer.h"
 #include "TokenProfile.h"
 #include "Token.h"
@@ -40,7 +41,8 @@ int main(int argc, char** argv) {
 
     unsigned int scannerOrigin = 0;
     LexicalAnalyzer l = LexicalAnalyzer(fileBuffer, scannerOrigin);
-    Parser p = Parser(l);
+    Evaluator e = Evaluator();
+    Parser p = Parser(l, e);
     p.start();
 
     return 0;

@@ -11,26 +11,26 @@ SRC = src
 BIN = bin
 BUILD = build
 EXE = interpreter
-OBJS = Token.o TokenProfile.o LexicalAnalyzer.o Parser.o
-
-TESTINPUT = examples/ex1.lisp
-TESTOUTPUT = examples/ex1.result.lisp
+OBJS = Token.o TokenProfile.o LexicalAnalyzer.o Parser.o Evaluator.o
 
 all: $(OBJS)
 	mkdir bin
-	$(CXX) $(SRC)/main.cc $(BUILD)/Token.o $(BUILD)/TokenProfile.o $(BUILD)/LexicalAnalyzer.o $(BUILD)/Parser.o -o $(BIN)/$(EXE)
+	$(CXX) $(SRC)/main.cpp $(BUILD)/Token.o $(BUILD)/TokenProfile.o $(BUILD)/LexicalAnalyzer.o $(BUILD)/Evaluator.o $(BUILD)/Parser.o -o $(BIN)/$(EXE)
 
-Token.o: $(SRC)/Token.cc
+Token.o: $(SRC)/Token.cpp
 	mkdir $(BUILD)
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-TokenProfile.o: $(SRC)/TokenProfile.cc
+TokenProfile.o: $(SRC)/TokenProfile.cpp
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-LexicalAnalyzer.o: $(SRC)/LexicalAnalyzer.cc
+LexicalAnalyzer.o: $(SRC)/LexicalAnalyzer.cpp
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-Parser.o: $(SRC)/Parser.cc
+Parser.o: $(SRC)/Parser.cpp
+	$(COMPILE) -c -o $(BUILD)/$@ $<
+
+Evaluator.o: $(SRC)/Evaluator.cpp
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
 clean:
