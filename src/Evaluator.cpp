@@ -1,10 +1,16 @@
 #include "Evaluator.h"
 
 ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
+    // cout << "inside evaluateExpression with root: " << printExpression(root) << endl;
     if (treeToBool(atom(root))) {
-        if (treeToBool(lit(root)) ||
-            treeToBool(num(root)) ||
-            treeToBool(null(root))) {
+
+        // cout << "atom: " << printExpression(root) << endl;
+
+        if (/* treeToBool(lit(root)) || */
+            treeToBool(num(cons(root, new ExpressionTreeNode()))) ||
+            treeToBool(null(cons(root, new ExpressionTreeNode())))) {
+
+            // cout << "num or nil atom: " << printExpression(root) << endl;
             return root;
         } else {
             cerr << "\nERROR: Unexpected atom: " << printExpression(root);
@@ -43,7 +49,9 @@ ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
         // cout << "len of INT: " << len(root) << endl;
         return num(evaluateExpression(cdrResult));
     } else if (op.compare("QUOTE") == 0) {
-        // cout << "len of QUOTE: " << len(root) << endl;
+        // cout << "enter quote" <<endl;
+        // cout << printExpression(cdrResult) << endl;
+        // cout << printExpression(car(cdrResult)) << endl;
         return car(cdrResult);
     } else if (op.compare("CONS") == 0) {
         // cout << "len of CONS: " << len(root) << endl;
@@ -77,7 +85,7 @@ ExpressionTreeNode* Evaluator::evaluateExpression(ExpressionTreeNode *root) {
     } else if (op.compare("EQ") == 0) {
         ExpressionTreeNode *leftOperand = evaluateExpression(car(cons(car(cdrResult), new ExpressionTreeNode())));
         ExpressionTreeNode *rightOperand = evaluateExpression(car(cdr(cdrResult)));
-        return eq(evaluateExpression(leftOperand), evaluateExpression(rightOperand));
+        return eq(leftOperand, rightOperand);
     }
 
     return root;
@@ -195,7 +203,7 @@ ExpressionTreeNode* Evaluator::cons(ExpressionTreeNode *left, ExpressionTreeNode
  */
 ExpressionTreeNode* Evaluator::atom(ExpressionTreeNode *root) {
     if (root) {
-        if (len(root) == 1) {
+        if (len(root) == 0) {
             return nodeT();
         } else {
             return nodeNIL();
