@@ -53,6 +53,12 @@ This takes a vector of Tokens and generates a binary parse tree, representing
 our lisp program in a way that is usable and understandable. We are also able
 to print out formatted code for the user's benefit.
 
+## Evaluator
+
+This takes a binary expression tree and recursively evaluates the built-in lisp
+functions. This also provides a list printer, which is slightly different from
+the printer in the Parser module.
+
 ### Toolkit
 
 This is a helper class that provides helpful methods for writing tests.
