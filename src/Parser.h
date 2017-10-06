@@ -14,6 +14,8 @@
 #include "Token.h"
 #include "LexicalAnalyzer.h"
 
+using namespace std;
+
 struct ExpressionTreeNode {
     Token atom;
     ExpressionTreeNode *leftChild;
@@ -57,6 +59,8 @@ private:
 
     ExpressionTreeNode *nodeT();
     ExpressionTreeNode *nodeNIL();
+    ExpressionTreeNode *atomT();
+    ExpressionTreeNode *atomNIL();
 
     bool treeToBool(ExpressionTreeNode *root);
 
@@ -76,6 +80,7 @@ public:
     ExpressionTreeNode* parseExpression(ExpressionTreeNode *root);
     ExpressionTreeNode* evaluateExpression(ExpressionTreeNode *root);
     std::string printExpression(ExpressionTreeNode *root);
+    std::string printList(ExpressionTreeNode *root);
 };
 
 #endif
