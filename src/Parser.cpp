@@ -1,163 +1,76 @@
 #include "Parser.h"
-#include "../test/Tookit.h"
-#include "../test/TestParser.h"
+#include <sstream>
 
-/**
- * This is a helper function that will just iterate through every token that was
- * generated in the lexical analyzer (scanner), and print it off. While this was
- * more useful in earlier parts of the project, its used now only for debugging.
- */
-void Parser::printTokens() {
-    Token t = scanner.getCurrentToken();
-    while (
-        t.getTokenType() != eof &&
-        t.getTokenType() != error
-    ) {
-        cout << t.repr() << endl;
-        scanner.moveToNextToken();
-        t = scanner.getCurrentToken();
-    }
+#define TEOF "EOF"
+#define OpenParenthesis "OpenParenthesis"
+#define ClosingParenthesis "ClosingParenthesis"
+#define Atom "Atom"
+#define ERROR "ERROR"
+
+using namespace std;
+
+void Parser::initialize(){
+	string buff;
+	while (getline(cin, buff)){
+		inputLine += buff + "\n";
+	}
+	currentToken = getNextToken();
 }
 
-bool Parser::isAtom(Token t) {
-    return t.getTokenType() == atomLiteral ||
-           t.getTokenType() == atomNumeric ||
-           t.getTokenType() == nil;
+void Parser::moveToNext(){
+	currentToken = getNextToken(); 
 }
 
-/**
- * Here we begin the process of parsing expressions in our lisp program. As long
- * as the current token isn't an EOF, we want to continue iterating through
- * expressions to build our parse tree (see parseExpression() for more info).
- */
-void Parser::start() {
-    do {
-
-        ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
-        ExpressionTreeNode *evaluatedRoot = evaluator.evaluateExpression(root);
-        cout << evaluator.printExpression(evaluatedRoot) << endl;
-        
-        // if (isAtom(scanner.getCurrentToken())) {
-        //     // cout << scanner.getCurrentToken().repr() << endl;
-        //     scanner.moveToNextToken();
-        // } else {
-        //     ExpressionTreeNode *root = parseExpression(new ExpressionTreeNode());
-        //     ExpressionTreeNode *evaluatedRoot = evaluator.evaluateExpression(root);
-        //     cout << evaluator.printExpression(evaluatedRoot) << endl;
-        // }
-
-    } while (scanner.getCurrentToken().getTokenType() != eof);
+// "index" is the starting position to get token
+// "inputLines" is the string this function is reading
+// "error" is for error message. Stays empty unless error occurs.
+//  "atoms" is a string vector storing all literal atoms.
+//  "sum" is for summing up all numeric atoms.
+Token Parser::getNextToken(){
+	while (inputLine[index]==32 || inputLine[index]==9 || inputLine[index]==13 || inputLine[index]==10){
+		index++;
+	}
+	if((inputLine.length())==(unsigned)index){
+		return Token(TEOF);
+	}
+	else if(inputLine[index]==40){
+		index++;
+		return Token(OpenParenthesis,"(");
+	}
+	else if(inputLine[index]==41){
+		index++;
+		return Token(ClosingParenthesis,")");
+	}
+	else if((inputLine[index]>=65) && (inputLine[index]<=90)){
+		string word = string(1,inputLine[index]);
+		int temp = index;
+		while( ((inputLine[++temp])>=65 && (inputLine[temp])<=90) || ((inputLine[temp])>=48 && (inputLine[temp])<=57) )
+			word+=inputLine[temp];
+		index=temp;
+		return Token(Atom,word);
+	}
+	else if((inputLine[index]>=48) && (inputLine[index]<=57)){
+		string number = string(1,inputLine[index]);
+		int temp = index;
+		while(((inputLine[++temp])>=65 && (inputLine[temp])<=90) || ((inputLine[temp])>=48 && (inputLine[temp])<=57) )
+			number+=inputLine[temp];
+		index = temp;
+		for(unsigned int i =0;i<number.length();i++){
+			if (number[i] >=65 && number[i] <=90){
+				error = "Invalid token " + number;
+				return Token(ERROR);
+			}
+		}
+		return Token(Atom,number);
+	}
+	else{
+		stringstream convert;
+		convert << index+1;
+		error = "Unrecognized character \"" + string(1,inputLine[index]) + "\" at " + convert.str();
+		return Token(ERROR);
+	}
 }
 
-// Wrapper / fixer for expression handling.
-ExpressionTreeNode* Parser::parseExpression(ExpressionTreeNode *root) {
-    _parseExpression(root);
-    root = root->leftChild;
-    return root;
-}
-
-/**
- * This method is able to parse a single expression, corresponding to our CFG:
- *
- *     <Start> ::= <Expr> <Start> | <Expr> eof
- *     <Expr>  ::= atom | ( <List> )
- *     <List>  ::= <Expr> <List>
- *
- * The result is a binary parse tree that will allow us to traverse the program
- * later on in our interpreter. In this binary tree, the left child of the root
- * will be the head of a lisp statement, and the right child will be its tail.
- */
-void Parser::_parseExpression(ExpressionTreeNode *root) {
-    // cout << scanner.getCurrentToken().repr() << endl;
-    ExpressionTreeNode *nodeNIL = new ExpressionTreeNode();
-
-    // Scaffold out an empty node.
-    ExpressionTreeNode *current = root;
-    current->leftChild = nodeNIL;
-    current->rightChild = nodeNIL;
-
-    if (isAtom(scanner.getCurrentToken())) {
-        // In this case, we have an atom. Construct a ETN with the left child
-        // containing the atom itself; the right child remains NIL.
-        ExpressionTreeNode *newAtomicNode = new ExpressionTreeNode();
-        newAtomicNode->atom = scanner.getCurrentToken();
-        current->leftChild = newAtomicNode;
-        scanner.moveToNextToken();
-    } else if (scanner.getCurrentToken().getTokenType() == parenOpen) {
-        ExpressionTreeNode *temp = current;
-        scanner.moveToNextToken(); // Consume opening parenthesis.
-        if (scanner.getCurrentToken().getTokenType() == parenClose) {
-            // Here, we have a NIL token.
-            scanner.moveToNextToken();
-            temp = temp->leftChild;
-        } else {
-            // We have a LIST.
-            // cout << "beginlist\n";
-            ExpressionTreeNode *newList = new ExpressionTreeNode();
-            temp->leftChild = newList;
-            while (scanner.getCurrentToken().getTokenType() != parenClose) {
-                _parseExpression(newList);
-                newList = newList->rightChild;
-            }
-
-            // cout << "endlist\n";
-            scanner.moveToNextToken();
-        }
-
-
-    } else {
-        cout << "Parse error: expected atom (numeric, literal) or list: "
-                  << scanner.getCurrentToken().repr()
-                  << endl;
-
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Traverses through a parse tree generated by parseExpression() which allows
- * us to print an expression in a way that is understandable to users.
- */
-string Parser::printExpression(ExpressionTreeNode *root) {
-    string result = "";
-
-    if (root) {
-        if (root->leftChild) {
-            result.append("(");
-            result.append(printExpression(root->leftChild));
-            result.append(" . ");
-            if (root->rightChild) {
-                result.append(printExpression(root->rightChild));
-            } else {
-                result.append("NIL");
-            }
-            result.append(")");
-        } else {
-            result.append(root->atom.repr());
-        }
-    }
-
-    return result;
-}
-
-string Parser::printList(ExpressionTreeNode *root) {
-    string result = "";
-
-    if (root) {
-        if (root->leftChild) {
-            result.append("(");
-            result.append(printExpression(root->leftChild));
-            result.append(" . ");
-            if (root->rightChild) {
-                result.append(printExpression(root->rightChild));
-            } else {
-                result.append("NIL");
-            }
-            result.append(")");
-        } else {
-            result.append(root->atom.repr());
-        }
-    }
-
-    return result;
+void Parser::print(stringstream& ss){
+	ss << currentToken.content;
 }

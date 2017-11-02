@@ -11,26 +11,17 @@ SRC = src
 BIN = bin
 BUILD = build
 EXE = interpreter
-OBJS = Token.o TokenProfile.o LexicalAnalyzer.o Parser.o Evaluator.o
+OBJS = main.o parser.o
 
 all: $(OBJS)
 	mkdir bin
-	$(CXX) $(SRC)/main.cpp $(BUILD)/Token.o $(BUILD)/TokenProfile.o $(BUILD)/LexicalAnalyzer.o $(BUILD)/Evaluator.o $(BUILD)/Parser.o -o $(BIN)/$(EXE)
+	$(CXX) $(SRC)/main.cpp $(BUILD)/parser.o -o $(BIN)/$(EXE)
 
-Token.o: $(SRC)/Token.cpp
+main.o: $(SRC)/main.cpp
 	mkdir $(BUILD)
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
-TokenProfile.o: $(SRC)/TokenProfile.cpp
-	$(COMPILE) -c -o $(BUILD)/$@ $<
-
-LexicalAnalyzer.o: $(SRC)/LexicalAnalyzer.cpp
-	$(COMPILE) -c -o $(BUILD)/$@ $<
-
-Parser.o: $(SRC)/Parser.cpp
-	$(COMPILE) -c -o $(BUILD)/$@ $<
-
-Evaluator.o: $(SRC)/Evaluator.cpp
+parser.o: $(SRC)/Parser.cpp
 	$(COMPILE) -c -o $(BUILD)/$@ $<
 
 clean:

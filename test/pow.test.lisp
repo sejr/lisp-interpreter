@@ -1,0 +1,18 @@
+(DEFUN POW (X N)
+    (COND 
+        ((EQ N 0) 1)
+        (T (TIMES X (POW X (MINUS N 1))))))
+
+(POW 2 0)
+(POW 2 1)
+(POW 2 2)
+(POW 2 3)
+(POW 2 4)
+(POW 2 5)
+(POW 2 6)
+(POW 2 7)
+(POW 2 8)
+(POW 2 9)
+(POW 2 10)
+(POW 2 11)
+(POW 2 12)
