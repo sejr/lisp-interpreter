@@ -1,21 +1,24 @@
-#include <string>
+#ifndef PARSER_H
+#define PARSER_H
+
 #include <iostream>
 #include <sstream>
-#include "Token.h"
+#include <string>
 
-#ifndef SCANNER_H
-#define SCANNER_H
+#include "Token.h"
 
 using namespace std;
 
 struct Parser {
-	int index;
-	string inputLine, error;
-	Token currentToken;
-	void initialize();// read file
-	void moveToNext();
-	Token getNextToken();
-	void print(stringstream& ss);
+
+    int Index;
+    Token Current;
+    string InputLine, error;
+
+    void Init();
+    void MoveToNext();
+    Token getNextToken();
+    void print(stringstream & ss);
 };
 
 #endif

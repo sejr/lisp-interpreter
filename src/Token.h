@@ -6,15 +6,19 @@
 using namespace std;
 
 struct Token {
-    string type, content;
+
+    string Type, Content;
+
     Token(string a, string b) {
-        type = a;
-        content = b;
+        Type = a;
+        Content = b;
     }
-    Token(string a){
-        type = content = a;
+
+    Token(string a) {
+        Type = Content = a;
     }
-    Token(){}
+
+    Token() {}
 };
 
 #endif

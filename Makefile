@@ -10,7 +10,7 @@ COMPILE = $(CXX) $(CXXFLAGS)
 SRC = src
 BIN = bin
 BUILD = build
-EXE = interpreter
+EXE = Interpreter
 OBJS = main.o parser.o
 
 all: $(OBJS)
