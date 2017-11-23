@@ -1,7 +1,0 @@
-(123)
-(ABC)
-(NIL)
-(())
-(PLUS 1 2)
-(MINUS 3 4)
-(INT (PLUS 5 (MINUS 6 7)))

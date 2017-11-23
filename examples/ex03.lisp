@@ -1,1 +1,0 @@
-(DEFUN )ALPHA )(F123 X (APPLE))()
